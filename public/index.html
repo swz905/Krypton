@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krypton — Live Indian Train Radar</title>
+  <meta name="description" content="Real-time Indian train tracking radar with live positions and reachability analysis.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="map"></div>
+
+  <aside id="sidebar">
+    <header>
+      <h1>Krypton</h1>
+      <span class="badge">LIVE</span>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="radar">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        Radar
+      </button>
+      <button class="tab" data-tab="reach">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Reach
+      </button>
+    </nav>
+
+    <!-- RADAR -->
+    <section id="panel-radar" class="panel active">
+      <form id="radarForm" autocomplete="off">
+        <label>Train Number
+          <input type="text" name="train_number" placeholder="e.g. 12952" required>
+        </label>
+        <label>Journey Date
+          <input type="date" name="journey_date">
+        </label>
+        <label>Reference Station <span class="hint">(optional)</span>
+          <input type="text" name="ref_station" placeholder="Station code or name" list="stationList">
+        </label>
+        <label>Scan Radius (km)
+          <input type="number" name="radius" value="250" min="10" max="3000">
+        </label>
+        <div class="btn-row">
+          <button type="submit" id="scanBtn" class="btn primary">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            Scan Radar
+          </button>
+          <button type="button" id="stopBtn" class="btn danger" style="display:none;">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+            Stop
+          </button>
+        </div>
+      </form>
+      <div id="liveStatus" class="live-bar" style="display:none;"></div>
+      <div id="radarStatus" class="status-msg"></div>
+      <div id="radarResults" class="results"></div>
+    </section>
+
+    <!-- REACH -->
+    <section id="panel-reach" class="panel">
+      <form id="reachForm" autocomplete="off">
+        <label>Origin Station
+          <input type="text" name="origin_station" placeholder="Station code or name" list="stationList" required>
+        </label>
+        <label>Transit Window: <strong id="hoursVal">24</strong>h
+          <input type="range" name="max_hours" min="1" max="100" value="24" oninput="document.getElementById('hoursVal').textContent=this.value">
+        </label>
+        <div class="btn-row">
+          <button type="submit" id="reachBtn" class="btn primary">Analyze Reach</button>
+        </div>
+      </form>
+      <div id="reachStatus" class="status-msg"></div>
+      <div id="reachResults" class="results"></div>
+    </section>
+  </aside>
+
+  <datalist id="stationList"></datalist>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

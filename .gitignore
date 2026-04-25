@@ -1,25 +1,13 @@
-# Virtual environments
-.venv/
-venv/
-
-# Python cache
-__pycache__/
-*.pyc
-
-# Secrets & tokens
+node_modules/
+data/
 .env
 credentials.json
 token.json
-
-# Data files (too large for git)
-data/
-
-# Temp/debug files
+.venv/
+venv/
+__pycache__/
+*.pyc
 tmp_*
 tempCodeRunner*
 stations_missing_code_report.txt
 instance/
-
-# IDE
-.vscode/
-.idea/
