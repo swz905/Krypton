@@ -25,12 +25,10 @@ export function init(io) {
     stopBtn.style.display = 'none';
     liveBar.style.display = 'none';
     clearAll();
-    clearEvents();
     showStatus('radarStatus', 'Fetching live data...', 'info');
     document.getElementById('radarResults').innerHTML = '';
 
     socket.emit('stop_tracking');
-    stopEventsPolling();
 
     const fd = Object.fromEntries(new FormData(form));
     mainTrain = fd.train_number;
