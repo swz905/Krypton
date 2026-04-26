@@ -181,5 +181,157 @@ router.post('/api/reach', (req, res) => {
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
+// POST /api/events — crossing & overtake prediction
+router.post('/api/events', async (req, res) => {
+  try {
+    const { train_number } = req.body;
+    if (!train_number) return res.status(400).json({ error: 'Missing train number.' });
+
+    const snap = await refreshSnapshot();
+    if (snap.error) return res.status(502).json({ error: snap.error });
+
+    const refRow = snap.index[String(train_number)];
+    if (!refRow) return res.status(404).json({ error: `Train ${train_number} not found in live snapshot.` });
+
+    // 1. Get reference train's full schedule
+    const refSchedule = db.getTrainSchedule(String(train_number));
+    if (!refSchedule.length) return res.status(404).json({ error: `No schedule found for ${train_number}.` });
+
+    // 2. Find current position via RailRadar current_station
+    const currentStn = refRow.current_station || '';
+    let currentIdx = refSchedule.findIndex(s => s.stnCode === currentStn);
+    if (currentIdx < 0) {
+      const refKm = refRow.curr_distance;
+      if (refKm != null) {
+        let bestDiff = Infinity;
+        refSchedule.forEach((s, i) => {
+          const diff = Math.abs((s.km || 0) - refKm);
+          if (diff < bestDiff) { bestDiff = diff; currentIdx = i; }
+        });
+      }
+    }
+    if (currentIdx < 0) currentIdx = 0;
+
+    // 3. Future stations
+    const futureStops = refSchedule.slice(currentIdx + 1);
+    if (!futureStops.length) return res.json({ events: [], message: 'Train near destination.' });
+
+    const futureStationCodes = futureStops.map(s => s.stnCode);
+
+    // Reference train's current abs position & ETA at each future station
+    const refDepAbs = refSchedule[0].depAbs || 0;
+    const refCurrentAbs = refDepAbs + (refRow.mins_since_dep || 0);
+    const refDirUp = (refSchedule[refSchedule.length - 1].km || 0) > (refSchedule[0].km || 0);
+
+    // refETA[stnCode] = minutes from NOW until ref arrives at that station
+    const refETA = {};
+    for (const s of futureStops) {
+      if (s.arrAbs != null) refETA[s.stnCode] = s.arrAbs - refCurrentAbs;
+    }
+
+    // 4. Find candidate trains at future stations (only running ones)
+    const candidates = db.getTrainsAtStations(futureStationCodes, String(train_number));
+    const runningTrains = new Set(snap.rows.map(r => r._tn));
+
+    // Group by train
+    const trainStops = {};
+    for (const c of candidates) {
+      if (!runningTrains.has(c.trainNumber)) continue;
+      if (!trainStops[c.trainNumber]) trainStops[c.trainNumber] = [];
+      trainStops[c.trainNumber].push(c);
+    }
+
+    // 5. Detect events using ETA comparison
+    const events = [];
+    const EVENT_WINDOW = 15;  // ±15 minutes
+    const MAX_LOOKAHEAD = 4 * 60; // 4 hours
+
+    // Cache other trains' currentAbs to avoid re-computing
+    const otherCurrentAbsCache = {};
+
+    for (const [otherTn, stops] of Object.entries(trainStops)) {
+      const otherRow = snap.index[otherTn];
+      if (!otherRow) continue;
+
+      // Compute other train's currentAbs (its depAbs + mins_since_dep)
+      if (!(otherTn in otherCurrentAbsCache)) {
+        const otherSch = db.getTrainSchedule(otherTn);
+        const otherDepAbs = otherSch.length ? (otherSch[0].depAbs || 0) : 0;
+        otherCurrentAbsCache[otherTn] = {
+          currentAbs: otherDepAbs + (otherRow.mins_since_dep || 0),
+          dirUp: otherSch.length >= 2
+            ? (otherSch[otherSch.length - 1].km || 0) > (otherSch[0].km || 0)
+            : true,
+        };
+      }
+      const { currentAbs: otherCurrentAbs, dirUp: otherDirUp } = otherCurrentAbsCache[otherTn];
+      const sameDirection = refDirUp === otherDirUp;
+
+      for (const stop of stops) {
+        const refEtaMin = refETA[stop.stnCode];
+        if (refEtaMin == null || stop.arrAbs == null) continue;
+
+        // Other train's ETA at this station (minutes from NOW)
+        const otherEtaMin = stop.arrAbs - otherCurrentAbs;
+
+        // Both ETAs should be in the future and within lookahead
+        if (refEtaMin < -5 || refEtaMin > MAX_LOOKAHEAD) continue;
+        if (otherEtaMin < -30) continue; // other already passed long ago
+
+        // Gap = how close in time they arrive at the same station
+        const gap = otherEtaMin - refEtaMin;
+        if (Math.abs(gap) > EVENT_WINDOW) continue;
+
+        const stnCoords = db.getStationCoords(stop.stnCode);
+        const stnName = db.getStationNames([stop.stnCode])[stop.stnCode] || stop.stnCode;
+
+        let eventType = 'CROSS';
+        if (sameDirection) {
+          eventType = gap > 0 ? 'OVERTAKE' : 'OVERTAKEN';
+        }
+
+        events.push({
+          type:           eventType,
+          other_train:    otherTn,
+          other_name:     otherRow._name || 'N/A',
+          station_code:   stop.stnCode,
+          station_name:   stnName,
+          station_coords: stnCoords,
+          gap_min:        Math.round(gap),
+          mins_until:     Math.max(0, Math.round(refEtaMin)),
+          same_direction: sameDirection,
+        });
+      }
+    }
+
+    // De-duplicate: keep only closest event per other train
+    const bestPerTrain = {};
+    for (const e of events) {
+      const key = e.other_train;
+      if (!bestPerTrain[key] || e.mins_until < bestPerTrain[key].mins_until) {
+        bestPerTrain[key] = e;
+      }
+    }
+    const deduped = Object.values(bestPerTrain);
+    deduped.sort((a, b) => a.mins_until - b.mins_until);
+
+    for (const e of deduped) {
+      if (e.mins_until <= 5)       e.urgency = 'imminent';
+      else if (e.mins_until <= 15) e.urgency = 'soon';
+      else if (e.mins_until <= 60) e.urgency = 'watch';
+      else                         e.urgency = 'far';
+    }
+
+    res.json({
+      message: `${deduped.length} crossing/overtake events detected.`,
+      train_number: String(train_number),
+      current_station: currentStn,
+      events: deduped,
+    });
+  } catch (err) {
+    console.error('[events]', err);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+});
 
 export default router;

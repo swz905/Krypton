@@ -73,9 +73,10 @@ export function getTrainSchedule(trainNumber) {
     depTime: r[2],
     dayNum:  r[3],
     km:      r[4],
-    // Absolute time in minutes from midnight day 1
-    arrAbs: r[1] != null && r[3] != null ? (r[3] - 1) * 1440 + r[1] : null,
-    depAbs: r[2] != null && r[3] != null ? (r[3] - 1) * 1440 + r[2] : null,
+    // arrTime/depTime are already absolute minutes from midnight of departure day
+    // (they monotonically increase across multi-day journeys, e.g. 1420 = 23:40 day 1, 2242 = 13:22 day 2)
+    arrAbs: r[1],
+    depAbs: r[2],
   }));
 }
 
@@ -107,6 +108,30 @@ export function getTrainsDepartingFrom(stnCode, dayBit) {
   if (!rows.length) return [];
   return rows[0].values.map(r => ({
     trainNumber: r[0], depTime: r[1], dayNum: r[2], km: r[3], trainName: r[4], daysMask: r[5]
+  }));
+}
+
+// Event detection: batch-fetch schedules for all trains that pass through given stations
+export function getTrainsAtStations(stationCodes, excludeTrain) {
+  if (!stationCodes.length) return [];
+  const placeholders = stationCodes.map(() => '?').join(',');
+  const rows = db.exec(`
+    SELECT s.trnNumber, s.stnCode, s.arrTime, s.depTime, s.dayNum, s.km
+    FROM Sch s
+    WHERE s.stnCode IN (${placeholders})
+      AND s.trnNumber != ?
+    ORDER BY s.trnNumber, s.km
+  `, [...stationCodes, excludeTrain || '']);
+  if (!rows.length) return [];
+  return rows[0].values.map(r => ({
+    trainNumber: r[0],
+    stnCode:     r[1],
+    arrTime:     r[2],
+    depTime:     r[3],
+    dayNum:      r[4],
+    km:          r[5],
+    arrAbs:      r[2],  // arrTime is already absolute
+    depAbs:      r[3],
   }));
 }
 

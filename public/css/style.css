@@ -188,6 +188,65 @@ input[type="range"] { margin-top: 4px; accent-color: var(--accent); }
 .results tr.ref td { font-weight: 600; color: var(--accent); }
 .results .dist { font-variant-numeric: tabular-nums; color: var(--text-2); }
 
+/* EVENTS */
+.events-banner {
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 13px; font-weight: 700;
+  background: var(--danger); color: #fff;
+  animation: pulse-banner 1s ease-in-out infinite;
+  text-align: center;
+}
+@keyframes pulse-banner {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .75; box-shadow: 0 0 12px rgba(230,57,70,.5); }
+}
+.events-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  background: var(--bg);
+}
+.events-title {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .8px;
+  color: var(--text-2);
+  margin-bottom: 8px;
+}
+.event-card {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  border-left: 3px solid var(--border);
+  background: var(--surface);
+  transition: border-color .3s, background .3s;
+}
+.event-card.imminent { border-left-color: var(--danger); background: #fde8ea; }
+.event-card.soon     { border-left-color: #f4a261; background: #fef3e2; }
+.event-card.watch    { border-left-color: var(--accent); }
+.event-card.far      { border-left-color: var(--border); }
+.event-tag {
+  font-size: 9px; font-weight: 800; letter-spacing: .5px;
+  padding: 2px 6px; border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.event-tag.CROSS    { background: #e8f4fd; color: var(--accent); }
+.event-tag.OVERTAKE { background: #fef3e2; color: #e76f51; }
+.event-tag.OVERTAKEN { background: #fde8ea; color: var(--danger); }
+.event-time {
+  font-weight: 700; font-variant-numeric: tabular-nums;
+  white-space: nowrap; flex-shrink: 0;
+  min-width: 40px;
+}
+.event-detail {
+  flex: 1; overflow: hidden;
+  white-space: nowrap; text-overflow: ellipsis;
+  color: var(--text-2);
+}
+.event-detail strong { color: var(--text); }
+
 /* TRAIN MARKER */
 .train-marker { background: none !important; border: none !important; filter: drop-shadow(0 1px 2px rgba(0,0,0,.3)); }
 
