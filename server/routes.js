@@ -71,10 +71,18 @@ router.post('/api/scan', async (req, res) => {
     const candidates = db.getTrainsAtStations(futureStationCodes, String(train_number));
     const runningTrains = new Set(snap.rows.map(r => r._tn));
 
-    // Unique running trains at future stations
+    // Unique running trains where the common station is still AHEAD of them
     const relevantTrainNums = new Set();
     for (const c of candidates) {
-      if (runningTrains.has(c.trainNumber)) relevantTrainNums.add(c.trainNumber);
+      if (!runningTrains.has(c.trainNumber)) continue;
+      const row = snap.index[c.trainNumber];
+      if (!row) continue;
+      // Check: has this train already passed the common station?
+      // row.curr_distance = how far the train has traveled from its origin (km)
+      // c.km = the common station's km in this train's schedule
+      const trainKm = row.curr_distance;
+      if (trainKm != null && c.km != null && trainKm > c.km + 5) continue; // already passed (+5km tolerance)
+      relevantTrainNums.add(c.trainNumber);
     }
 
     // 5. Build results — only the relevant trains
