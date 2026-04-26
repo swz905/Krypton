@@ -313,16 +313,18 @@ function computeEvents(trainNumber, refSchedule, currentIdx, snap, live) {
       }
 
       // Check consecutive pairs for order reversal
+      // PLUS: at the reversal station, both trains must be there around the same
+      // time (|diff| ≤ 30 min) — otherwise they're hours apart and never
+      // actually "passing" each other on the tracks.
+      const OVERTAKE_PROXIMITY = 30; // minutes
       for (let i = 0; i < commonStops.length - 1; i++) {
         const a = commonStops[i];
         const b = commonStops[i + 1];
 
-        // At station A: diff is the arrival order
-        // At station B: diff is the arrival order
-        // If sign flips → overtake happened between A and B
-
-        if (a.diff < 0 && b.diff > 0) {
-          // Ref was first at A, but other is first at B → ref gets OVERTAKEN
+        // Sign flip in diff → order reversal between stations A and B
+        // At the reversal station (B), trains must be close in time
+        if (a.diff < 0 && b.diff > 0 && Math.abs(b.diff) <= OVERTAKE_PROXIMITY) {
+          // Ref was first at A, other is first at B → ref gets OVERTAKEN between A and B
           const stnName = db.getStationNames([b.stnCode])[b.stnCode] || b.stnCode;
           events.push({
             type: 'OVERTAKEN',
@@ -334,9 +336,9 @@ function computeEvents(trainNumber, refSchedule, currentIdx, snap, live) {
             mins_until: Math.max(0, Math.round(b.refEta)),
             same_direction: true,
           });
-          break; // one event per train
-        } else if (a.diff > 0 && b.diff < 0) {
-          // Other was first at A, but ref is first at B → ref OVERTAKES
+          break;
+        } else if (a.diff > 0 && b.diff < 0 && Math.abs(b.diff) <= OVERTAKE_PROXIMITY) {
+          // Other was first at A, ref is first at B → ref OVERTAKES
           const stnName = db.getStationNames([b.stnCode])[b.stnCode] || b.stnCode;
           events.push({
             type: 'OVERTAKE',
@@ -348,7 +350,7 @@ function computeEvents(trainNumber, refSchedule, currentIdx, snap, live) {
             mins_until: Math.max(0, Math.round(b.refEta)),
             same_direction: true,
           });
-          break; // one event per train
+          break;
         }
       }
     }
