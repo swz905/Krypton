@@ -5,6 +5,7 @@ let socket = null;
 let mainTrain = '';
 let journeyDate = '';
 let eventsTimer = null;
+let trackedTrains = [];
 
 export function init(io) {
   socket = io;
@@ -34,6 +35,7 @@ export function init(io) {
     const fd = Object.fromEntries(new FormData(form));
     mainTrain = fd.train_number;
     journeyDate = fd.journey_date || new Date().toISOString().slice(0, 10);
+    trackedTrains = [];
 
     try {
       const resp = await fetch('/api/scan', {
@@ -46,7 +48,7 @@ export function init(io) {
 
       showStatus('radarStatus', data.message, 'success');
       renderResults(data);
-      renderEvents(data.events || []);
+      trackedTrains = data.trains_to_track || [];
 
       // Show live status
       if (data.ref_live) {
@@ -57,9 +59,9 @@ export function init(io) {
       }
 
       // Auto-start tracking relevant trains via per-train live API
-      if (data.trains_to_track && data.trains_to_track.length > 0) {
+      if (trackedTrains.length > 0) {
         socket.emit('start_tracking', {
-          trains_to_track: data.trains_to_track,
+          trains_to_track: trackedTrains,
           main_train: mainTrain,
           journey_date: data.journey_date,
           ref_coords: data.center,
@@ -68,8 +70,6 @@ export function init(io) {
         stopBtn.disabled = false;
       }
 
-      // Start event polling (refreshes every 30s)
-      startEventsPolling();
       scanBtn.disabled = false;
 
     } catch (err) {
@@ -82,8 +82,7 @@ export function init(io) {
     socket.emit('stop_tracking');
     stopBtn.style.display = 'none';
     liveBar.style.display = 'none';
-    stopEventsPolling();
-    clearEvents();
+    trackedTrains = [];
   });
 
   socket.on('tracking_status', (d) => {
@@ -114,86 +113,19 @@ export function init(io) {
       if (row) {
         const stnCell = row.querySelector('.stn');
         if (stnCell) stnCell.textContent = t.current_station || '';
+        
+        const distCell = row.querySelector('.dist');
+        if (distCell && t.distance_km != null) {
+          let arrow = '';
+          if (t.trend === 'increasing') arrow = ' ↗';
+          else if (t.trend === 'decreasing') arrow = ' ↘';
+          distCell.textContent = t.distance_km + ' km' + arrow;
+        }
       }
     }
   });
 }
 
-// ── Events ──────────────────────────────────────────
-
-async function fetchEvents() {
-  if (!mainTrain) return;
-  try {
-    const resp = await fetch('/api/events', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ train_number: mainTrain, journey_date: journeyDate }),
-    });
-    const data = await resp.json();
-    if (data.error) return;
-    renderEvents(data.events || []);
-
-    // Update live bar with delay info
-    if (data.delay_min != null) {
-      const liveBar = document.getElementById('liveStatus');
-      liveBar.textContent = `LIVE  ${data.current_station || ''} • ${data.delay_min} min late • ${new Date().toLocaleTimeString()}`;
-    }
-  } catch (err) {
-    console.error('[events] fetch failed:', err);
-  }
-}
-
-function startEventsPolling() {
-  stopEventsPolling();
-  eventsTimer = setInterval(fetchEvents, 30000);
-}
-
-function stopEventsPolling() {
-  if (eventsTimer) { clearInterval(eventsTimer); eventsTimer = null; }
-}
-
-function clearEvents() {
-  document.getElementById('eventsBanner').style.display = 'none';
-  document.getElementById('eventsPanel').style.display = 'none';
-  document.getElementById('eventsList').innerHTML = '';
-}
-
-function renderEvents(events) {
-  const banner = document.getElementById('eventsBanner');
-  const panel  = document.getElementById('eventsPanel');
-  const list   = document.getElementById('eventsList');
-
-  const imminent = events.filter(e => e.urgency === 'imminent' || e.urgency === 'soon');
-
-  if (imminent.length > 0) {
-    const first = imminent[0];
-    const label = first.type === 'CROSS' ? '✕ CROSSING' : first.type === 'OVERTAKE' ? '↗ OVERTAKE' : '↙ OVERTAKEN';
-    banner.textContent = `${label} in ~${first.mins_until} min — ${first.other_train} ${first.other_name} at ${first.station_name}`;
-    banner.style.display = 'block';
-  } else {
-    banner.style.display = 'none';
-  }
-
-  if (events.length === 0) {
-    panel.style.display = 'none';
-    return;
-  }
-
-  panel.style.display = 'block';
-  let html = '';
-  for (const e of events.slice(0, 20)) {
-    const timeStr = e.mins_until < 60
-      ? e.mins_until + ' min'
-      : Math.floor(e.mins_until / 60) + 'h ' + (e.mins_until % 60) + 'm';
-
-    html += `<div class="event-card ${e.urgency}">
-      <span class="event-tag ${e.type}">${e.type}</span>
-      <span class="event-time">${timeStr}</span>
-      <span class="event-detail"><strong>${e.other_train}</strong> ${e.other_name} at ${e.station_name}</span>
-    </div>`;
-  }
-  list.innerHTML = html;
-}
 
 // ── Render ──────────────────────────────────────────
 
@@ -208,13 +140,15 @@ function renderResults(data) {
     bounds.extend(data.center);
   }
 
-  let html = '<table><thead><tr><th>Train</th><th>Name</th><th>Station</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>Train</th><th>Name</th><th>Station</th><th>Distance</th></tr></thead><tbody>';
   for (const t of data.trains || []) {
     const cls = t.is_reference ? ' class="ref"' : '';
+    const distStr = t.distance_km != null ? t.distance_km + ' km' : '';
     html += `<tr id="r-${t.train_number}"${cls}>
       <td>${t.train_number}</td>
       <td>${t.train_name}</td>
       <td class="stn">${t.current_station || ''}</td>
+      <td class="dist">${distStr}</td>
     </tr>`;
 
     if (t.coords) {

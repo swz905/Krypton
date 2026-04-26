@@ -3,6 +3,7 @@ import { Router } from 'express';
 import cfg from './config.js';
 import * as db from './db.js';
 import { refreshSnapshot, getCachedSnapshot, fetchTrainLive } from './railradar.js';
+import { getRecentLive } from './tracking.js';
 
 const router = Router();
 
@@ -58,32 +59,20 @@ router.post('/api/scan', async (req, res) => {
     }
     if (currentIdx < 0) currentIdx = 0;
 
-    // 3. Future stations (everything ahead)
-    const futureStops = refSchedule.slice(currentIdx);
-    const futureStationCodes = futureStops.map(s => s.stnCode);
-    if (!futureStationCodes.length) {
-      return res.json({ message: 'Train near destination.', trains: [], events: [] });
-    }
-
-    // 4. From bulk map, find all RUNNING trains that pass through those future stations
+    // 3. Find all running trains within the radius using the snapshot
     const snap = await refreshSnapshot();
     if (snap.error) return res.status(502).json({ error: snap.error });
 
-    const candidates = db.getTrainsAtStations(futureStationCodes, String(train_number));
-    const runningTrains = new Set(snap.rows.map(r => r._tn));
-
-    // Unique running trains where the common station is still AHEAD of them
+    const runningTrains = snap.rows;
     const relevantTrainNums = new Set();
-    for (const c of candidates) {
-      if (!runningTrains.has(c.trainNumber)) continue;
-      const row = snap.index[c.trainNumber];
-      if (!row) continue;
-      // Check: has this train already passed the common station?
-      // row.curr_distance = how far the train has traveled from its origin (km)
-      // c.km = the common station's km in this train's schedule
-      const trainKm = row.curr_distance;
-      if (trainKm != null && c.km != null && trainKm > c.km + 5) continue; // already passed (+5km tolerance)
-      relevantTrainNums.add(c.trainNumber);
+    
+    for (const row of runningTrains) {
+      if (row._tn === String(train_number)) continue;
+      const coords = [row._lat, row._lng];
+      const dist = haversine(refCoords, coords);
+      if (dist <= maxRadius) {
+        relevantTrainNums.add(row._tn);
+      }
     }
 
     // 5. Build results — only the relevant trains
@@ -120,16 +109,14 @@ router.post('/api/scan', async (req, res) => {
 
     results.sort((a, b) => a.distance_km - b.distance_km);
 
-    // 6. Compute events inline (same logic as /api/events)
-    const events = computeEvents(String(train_number), refSchedule, currentIdx, snap, live);
-
     // Only track trains that passed the radius filter
     const trackedNums = results.filter(r => !r.is_reference).map(r => r.train_number);
 
     res.json({
-      message: `${trackedNums.length} trains within ${maxRadius} km share future stations. ${events.length} events detected.`,
+      message: `${trackedNums.length} trains found within ${maxRadius} km of ${train_number}.`,
       trains: results,
-      events,
+      events: [],
+
       center: refCoords,
       center_label: `${train_number} (${refStnName})`,
       ref_live: {
@@ -140,7 +127,7 @@ router.post('/api/scan', async (req, res) => {
         coords: refCoords,
         last_updated: live.lastUpdated,
       },
-      trains_to_track: trackedNums,
+      trains_to_track: [String(train_number), ...trackedNums],
       journey_date: jDate,
       radius_km: maxRadius,
     });
@@ -155,7 +142,7 @@ router.post('/api/scan', async (req, res) => {
 // ─────────────────────────────────────────────────────
 router.post('/api/events', async (req, res) => {
   try {
-    const { train_number, journey_date } = req.body;
+    const { train_number, journey_date, trains_to_track } = req.body;
     if (!train_number) return res.status(400).json({ error: 'Missing train number.' });
 
     const jDate = journey_date || new Date().toISOString().slice(0, 10);
@@ -182,7 +169,12 @@ router.post('/api/events', async (req, res) => {
     const snap = await refreshSnapshot();
     if (snap.error) return res.status(502).json({ error: snap.error });
 
-    const events = computeEvents(String(train_number), refSchedule, currentIdx, snap, live);
+    const allowedTrainNums = Array.isArray(trains_to_track)
+      ? trains_to_track.map(String).filter(tn => tn !== String(train_number))
+      : null;
+    const events = computeEvents(String(train_number), refSchedule, currentIdx, snap, live, {
+      allowedTrainNums,
+    });
 
     res.json({
       message: `${events.length} events detected.`,
@@ -200,19 +192,115 @@ router.post('/api/events', async (req, res) => {
 // ─────────────────────────────────────────────────────
 // Event detection engine (shared by scan + events)
 // ─────────────────────────────────────────────────────
-function computeEvents(trainNumber, refSchedule, currentIdx, snap, live) {
+function getStopAbs(stop) {
+  return stop?.arrAbs ?? stop?.depAbs ?? null;
+}
+
+function getCurrentDistanceKm({ live, recent, row }) {
+  const liveKm = live?.location?.distanceFromOriginKm;
+  if (liveKm != null && Number.isFinite(Number(liveKm))) return Number(liveKm);
+  const recentKm = recent?.distanceFromOriginKm;
+  if (recentKm != null && Number.isFinite(Number(recentKm))) return Number(recentKm);
+  const rowKm = row?._distanceKm ?? row?.curr_distance ?? row?.current_distance ?? row?.distanceFromOriginKm;
+  if (rowKm != null && Number.isFinite(Number(rowKm))) return Number(rowKm);
+  return null;
+}
+
+function getCurrentStationCode({ live, recent, row }) {
+  return live?.location?.stationCode
+    || recent?.stationCode
+    || row?.current_station
+    || row?.current_station_code
+    || null;
+}
+
+function estimateProgressAbs(schedule, state) {
+  const distanceKm = getCurrentDistanceKm(state);
+  if (distanceKm != null) {
+    const exact = schedule.find(s => s.km != null && Math.abs(Number(s.km) - distanceKm) <= 1);
+    if (exact) return getStopAbs(exact) ?? 0;
+
+    for (let i = 0; i < schedule.length - 1; i++) {
+      const a = schedule[i], b = schedule[i + 1];
+      if (a.km == null || b.km == null || a.km === b.km) continue;
+      const minKm = Math.min(a.km, b.km), maxKm = Math.max(a.km, b.km);
+      if (distanceKm < minKm || distanceKm > maxKm) continue;
+
+      const aAbs = a.depAbs ?? a.arrAbs;
+      const bAbs = b.arrAbs ?? b.depAbs;
+      if (aAbs == null || bAbs == null) continue;
+
+      const ratio = Math.abs((distanceKm - a.km) / (b.km - a.km));
+      return aAbs + ratio * (bAbs - aAbs);
+    }
+
+    let nearest = schedule[0];
+    let bestDiff = Infinity;
+    for (const stop of schedule) {
+      if (stop.km == null) continue;
+      const diff = Math.abs(stop.km - distanceKm);
+      if (diff < bestDiff) {
+        bestDiff = diff;
+        nearest = stop;
+      }
+    }
+    return getStopAbs(nearest) ?? 0;
+  }
+
+  const mins = state.row?._minsSinceDep ?? state.row?.mins_since_dep;
+  if (mins != null && Number.isFinite(Number(mins))) {
+    return (schedule[0]?.depAbs ?? getStopAbs(schedule[0]) ?? 0) + Number(mins);
+  }
+
+  const stationCode = getCurrentStationCode(state);
+  const stationIdx = stationCode ? schedule.findIndex(s => s.stnCode === stationCode) : -1;
+  if (stationIdx >= 0) return getStopAbs(schedule[stationIdx]) ?? 0;
+  if (state.currentIdx != null && state.currentIdx >= 0) return getStopAbs(schedule[state.currentIdx]) ?? 0;
+  return schedule[0]?.depAbs ?? getStopAbs(schedule[0]) ?? 0;
+}
+
+function classifyCommonDirection(commonStops, refSchedule, otherSchedule) {
+  if (commonStops.length >= 2) {
+    let score = 0;
+    for (let i = 1; i < commonStops.length; i++) {
+      const delta = commonStops[i].otherIdx - commonStops[i - 1].otherIdx;
+      if (delta > 0) score++;
+      if (delta < 0) score--;
+    }
+    if (score !== 0) return score > 0;
+  }
+
+  return routeKmDirection(refSchedule) === routeKmDirection(otherSchedule);
+}
+
+function routeKmDirection(schedule) {
+  const first = schedule.find(s => s.km != null);
+  const last = [...schedule].reverse().find(s => s.km != null);
+  if (!first || !last || first.km === last.km) return true;
+  return last.km > first.km;
+}
+
+function hasPassedStop(schedule, currentKm, stop) {
+  if (currentKm == null || stop?.km == null) return false;
+  const dirUp = routeKmDirection(schedule);
+  return dirUp ? currentKm > stop.km + 5 : currentKm < stop.km - 5;
+}
+
+function computeEvents(trainNumber, refSchedule, currentIdx, snap, live, options = {}) {
   const futureStops = refSchedule.slice(currentIdx + 1);
   if (!futureStops.length) return [];
 
   const futureStationCodes = futureStops.map(s => s.stnCode);
-  const futureStationSet = new Set(futureStationCodes);
+  const allowedTrainNums = options.allowedTrainNums ? new Set(options.allowedTrainNums.map(String)) : null;
 
   // Ref train timing
-  const refDepAbs = refSchedule[0].depAbs || 0;
   const refRow = snap.index[trainNumber];
-  const refMinsRunning = refRow?.mins_since_dep || 0;
-  const refCurrentAbs = refDepAbs + refMinsRunning;
-  const refDirUp = (refSchedule[refSchedule.length - 1].km || 0) > (refSchedule[0].km || 0);
+  const refCurrentAbs = estimateProgressAbs(refSchedule, {
+    live,
+    recent: getRecentLive(trainNumber),
+    row: refRow,
+    currentIdx,
+  });
 
   // Ref ETA at each future station
   const refETA = {};
@@ -227,6 +315,7 @@ function computeEvents(trainNumber, refSchedule, currentIdx, snap, live) {
   // Group by train: only their stops at our future stations
   const trainStops = {};
   for (const c of candidates) {
+    if (allowedTrainNums && !allowedTrainNums.has(c.trainNumber)) continue;
     if (!runningTrains.has(c.trainNumber)) continue;
     if (!trainStops[c.trainNumber]) trainStops[c.trainNumber] = [];
     trainStops[c.trainNumber].push(c);
@@ -242,12 +331,15 @@ function computeEvents(trainNumber, refSchedule, currentIdx, snap, live) {
 
     const otherSch = db.getTrainSchedule(otherTn);
     if (!otherSch.length) continue;
-    const otherDepAbs = otherSch[0].depAbs || 0;
-    const otherCurrentAbs = otherDepAbs + (otherRow.mins_since_dep || 0);
-    const otherDirUp = otherSch.length >= 2
-      ? (otherSch[otherSch.length - 1].km || 0) > (otherSch[0].km || 0)
-      : true;
-    const sameDirection = refDirUp === otherDirUp;
+    const otherCurrentAbs = estimateProgressAbs(otherSch, {
+      recent: getRecentLive(otherTn),
+      row: otherRow,
+    });
+    const otherIndex = new Map(otherSch.map((s, i) => [s.stnCode, i]));
+    const commonInRefOrder = futureStops
+      .filter(s => otherIndex.has(s.stnCode))
+      .map(s => ({ refStop: s, otherStop: otherSch[otherIndex.get(s.stnCode)], otherIdx: otherIndex.get(s.stnCode) }));
+    const sameDirection = classifyCommonDirection(commonInRefOrder, refSchedule, otherSch);
 
     if (!sameDirection) {
       // ── CROSSING: opposite direction, same station within ±15 min ──
@@ -280,7 +372,7 @@ function computeEvents(trainNumber, refSchedule, currentIdx, snap, live) {
       // We need stops that are common AND in the future for BOTH trains
 
       // Other train's current km
-      const otherKm = otherRow.curr_distance;
+      const otherKm = getCurrentDistanceKm({ recent: getRecentLive(otherTn), row: otherRow });
 
       // Build ordered list of common stations with ETAs for both trains
       // Use ref's route order (futureStops) to maintain sequence
@@ -302,7 +394,7 @@ function computeEvents(trainNumber, refSchedule, currentIdx, snap, live) {
         if (refEta > MAX_LOOKAHEAD) continue;
 
         // Other train must not have passed this station
-        if (otherKm != null && os.km != null && otherKm > os.km + 5) continue;
+        if (hasPassedStop(otherSch, otherKm, os)) continue;
 
         commonStops.push({
           stnCode: fs.stnCode,

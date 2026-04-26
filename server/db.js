@@ -63,7 +63,10 @@ export function getStationNames(codes) {
 
 export function getTrainSchedule(trainNumber) {
   const rows = db.exec(
-    `SELECT stnCode, arrTime, depTime, dayNum, km FROM Sch WHERE trnNumber = ? ORDER BY km`,
+    `SELECT stnCode, arrTime, depTime, dayNum, km
+     FROM Sch
+     WHERE trnNumber = ?
+     ORDER BY COALESCE(NULLIF(arrTime, 0), depTime), COALESCE(depTime, arrTime), rowid`,
     [trainNumber]
   );
   if (!rows.length) return [];
@@ -120,7 +123,7 @@ export function getTrainsAtStations(stationCodes, excludeTrain) {
     FROM Sch s
     WHERE s.stnCode IN (${placeholders})
       AND s.trnNumber != ?
-    ORDER BY s.trnNumber, s.km
+    ORDER BY s.trnNumber, COALESCE(NULLIF(s.arrTime, 0), s.depTime), COALESCE(s.depTime, s.arrTime), s.rowid
   `, [...stationCodes, excludeTrain || '']);
   if (!rows.length) return [];
   return rows[0].values.map(r => ({

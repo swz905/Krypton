@@ -8,6 +8,16 @@ const cache = {
   error: null,
 };
 
+function firstNumber(row, keys) {
+  for (const key of keys) {
+    const val = row?.[key];
+    if (val == null || val === '') continue;
+    const num = Number(val);
+    if (Number.isFinite(num)) return num;
+  }
+  return null;
+}
+
 export async function refreshSnapshot(force = false) {
   const now = Date.now() / 1000;
   if (!force && now - cache.fetchedAt < cfg.railradar.pollSeconds) return cache;
@@ -50,6 +60,21 @@ export async function refreshSnapshot(force = false) {
       row._lat = Number(lat);
       row._lng = Number(lng);
       row._name = row.train_name ?? row.trainName ?? '';
+      row._distanceKm = firstNumber(row, [
+        'curr_distance',
+        'current_distance',
+        'distanceFromOriginKm',
+        'distance_from_origin_km',
+        'distance_from_origin',
+        'distance',
+      ]);
+      row._minsSinceDep = firstNumber(row, [
+        'mins_since_dep',
+        'minutesSinceDeparture',
+        'minutes_since_departure',
+        'minsSinceDeparture',
+        'running_minutes',
+      ]);
       valid.push(row);
       index[row._tn] = row;
     }
