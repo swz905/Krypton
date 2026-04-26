@@ -56,11 +56,13 @@ export function init(io) {
         liveBar.style.display = 'flex';
       }
 
-      // Auto-start tracking relevant trains
+      // Auto-start tracking relevant trains via per-train live API
       if (data.trains_to_track && data.trains_to_track.length > 0) {
         socket.emit('start_tracking', {
           trains_to_track: data.trains_to_track,
           main_train: mainTrain,
+          journey_date: data.journey_date,
+          ref_coords: data.center,
         });
         stopBtn.style.display = 'flex';
         stopBtn.disabled = false;

@@ -25,7 +25,8 @@ router.get('/api/stations', (req, res) => {
 // ─────────────────────────────────────────────────────
 router.post('/api/scan', async (req, res) => {
   try {
-    const { train_number, journey_date } = req.body;
+    const { train_number, journey_date, radius } = req.body;
+    const maxRadius = Math.max(10, Math.min(parseInt(radius) || 250, 3000));
     if (!train_number) return res.status(400).json({ error: 'Missing train number.' });
 
     // 1. Get REAL live position of the reference train
@@ -106,6 +107,7 @@ router.post('/api/scan', async (req, res) => {
       if (!row) continue;
       const coords = [row._lat, row._lng];
       const dist = haversine(refCoords, coords);
+      if (dist > maxRadius) continue; // radius filter
       results.push({
         train_number: tn,
         train_name: row._name || 'N/A',
@@ -121,8 +123,11 @@ router.post('/api/scan', async (req, res) => {
     // 6. Compute events inline (same logic as /api/events)
     const events = computeEvents(String(train_number), refSchedule, currentIdx, snap, live);
 
+    // Only track trains that passed the radius filter
+    const trackedNums = results.filter(r => !r.is_reference).map(r => r.train_number);
+
     res.json({
-      message: `${results.length - 1} trains share future stations with ${train_number}. ${events.length} events detected.`,
+      message: `${trackedNums.length} trains within ${maxRadius} km share future stations. ${events.length} events detected.`,
       trains: results,
       events,
       center: refCoords,
@@ -135,7 +140,9 @@ router.post('/api/scan', async (req, res) => {
         coords: refCoords,
         last_updated: live.lastUpdated,
       },
-      trains_to_track: [...relevantTrainNums],
+      trains_to_track: trackedNums,
+      journey_date: jDate,
+      radius_km: maxRadius,
     });
   } catch (err) {
     console.error('[scan]', err);

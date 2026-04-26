@@ -1,9 +1,7 @@
-// server/tracking.js — Socket.IO live tracking
+// server/tracking.js — Socket.IO live tracking via per-train API (staggered)
 import cfg from './config.js';
-import * as db from './db.js';
-import { refreshSnapshot } from './railradar.js';
+import { fetchTrainLive } from './railradar.js';
 
-// Haversine
 function haversine([lat1, lon1], [lat2, lon2]) {
   const R = 6371, toR = d => d * Math.PI / 180;
   const dLat = toR(lat2 - lat1), dLon = toR(lon2 - lon1);
@@ -11,69 +9,77 @@ function haversine([lat1, lon1], [lat2, lon2]) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-const clients = new Map(); // socketId → { interval, trainNumbers, refCode, range, mainTrain }
+const STAGGER_DELAY_MS = 2000; // 2 seconds between each per-train API call
+const CYCLE_PAUSE_MS = 10000;  // 10 second pause between full cycles
+
+const clients = new Map(); // socketId → { abortController, trains, mainTrain, journeyDate, refCoords }
 
 export function setupTracking(io) {
   io.on('connection', (socket) => {
     console.log(`[ws] ${socket.id} connected`);
 
     socket.on('start_tracking', (data) => {
-      // Stop existing
       stopClient(socket.id);
 
-      const trains  = new Set(data.trains_to_track || []);
-      const refCode = data.ref_station_code;
-      const range   = data.spatial_range_km;
-      const main    = data.main_train;
+      const trains = data.trains_to_track || [];
+      const mainTrain = data.main_train;
+      const journeyDate = data.journey_date || new Date().toISOString().slice(0, 10);
+      const refCoords = data.ref_coords; // [lat, lng] of ref train
 
-      console.log(`[ws] ${socket.id} tracking ${trains.size} trains`);
+      console.log(`[ws] ${socket.id} tracking ${trains.length} trains (staggered, ${STAGGER_DELAY_MS}ms between calls)`);
 
-      const interval = setInterval(async () => {
-        try {
-          const snap = await refreshSnapshot();
-          if (snap.error) {
-            socket.emit('tracking_status', { status: 'error', message: snap.error });
-            return;
+      const abortController = new AbortController();
+
+      // Start the staggered polling loop
+      const runLoop = async () => {
+        while (!abortController.signal.aborted) {
+          for (const tn of trains) {
+            if (abortController.signal.aborted) break;
+
+            try {
+              const live = await fetchTrainLive(tn, journeyDate);
+              if (live.error || !live.location) continue;
+
+              const loc = live.location;
+              const coords = [loc.latitude, loc.longitude];
+              let dist = null;
+              if (refCoords) dist = haversine(refCoords, coords);
+
+              socket.emit('location_update', {
+                trains: [{
+                  train_number: tn,
+                  train_name: live.trainNumber || tn,
+                  coords,
+                  distance_km: dist != null ? Math.round(dist * 10) / 10 : null,
+                  is_reference: tn === mainTrain,
+                  current_station: loc.stationCode || '',
+                  status: loc.status || '',
+                  delay_min: live.delayMinutes,
+                }],
+                updated_at: new Date().toISOString(),
+              });
+            } catch (err) {
+              // Individual train fetch failed, skip
+            }
+
+            // Stagger: wait between calls to avoid spamming
+            await sleep(STAGGER_DELAY_MS, abortController.signal);
           }
 
-          const refCoords = refCode ? db.getStationCoords(refCode) : null;
-          const updated = [];
-
-          for (const row of snap.rows) {
-            if (!trains.has(row._tn)) continue;
-            const coords = [row._lat, row._lng];
-            let dist = null;
-            if (refCoords) dist = haversine(refCoords, coords);
-
-            // Skip if out of range (but always keep main train)
-            if (range && dist != null && dist > range && row._tn !== main) continue;
-
-            updated.push({
-              train_number:    row._tn,
-              train_name:      row._name || 'N/A',
-              coords,
-              distance_km:     dist != null ? Math.round(dist * 10) / 10 : null,
-              is_reference:    row._tn === main,
-              current_station: row.current_station_name || row.current_station || '',
-            });
-          }
-
-          socket.emit('location_update', {
-            trains:   updated,
-            updated_at: new Date().toISOString(),
-          });
-        } catch (err) {
-          console.error(`[ws] ${socket.id} tick error:`, err.message);
+          // Pause between full cycles
+          await sleep(CYCLE_PAUSE_MS, abortController.signal);
         }
-      }, cfg.liveUpdateInterval * 1000);
+      };
 
-      clients.set(socket.id, { interval, trains, refCode, range, main });
-      socket.emit('tracking_status', { status: 'started', message: 'Live tracking started.' });
+      runLoop().catch(() => {}); // Silently stop on abort
+
+      clients.set(socket.id, { abortController });
+      socket.emit('tracking_status', { status: 'started', count: trains.length });
     });
 
     socket.on('stop_tracking', () => {
       stopClient(socket.id);
-      socket.emit('tracking_status', { status: 'stopped', message: 'Tracking stopped.' });
+      socket.emit('tracking_status', { status: 'stopped' });
     });
 
     socket.on('disconnect', () => {
@@ -86,7 +92,15 @@ export function setupTracking(io) {
 function stopClient(id) {
   const c = clients.get(id);
   if (c) {
-    clearInterval(c.interval);
+    c.abortController.abort();
     clients.delete(id);
   }
+}
+
+function sleep(ms, signal) {
+  return new Promise((resolve) => {
+    if (signal?.aborted) return resolve();
+    const timer = setTimeout(resolve, ms);
+    signal?.addEventListener('abort', () => { clearTimeout(timer); resolve(); }, { once: true });
+  });
 }
