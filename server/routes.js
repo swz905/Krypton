@@ -59,19 +59,34 @@ router.post('/api/scan', async (req, res) => {
     }
     if (currentIdx < 0) currentIdx = 0;
 
-    // 3. Find all running trains within the radius using the snapshot
+    // 3. Future stations (everything ahead)
+    const futureStops = refSchedule.slice(currentIdx);
+    const futureStationCodes = futureStops.map(s => s.stnCode);
+    if (!futureStationCodes.length) {
+      return res.json({ message: 'Train near destination.', trains: [], events: [] });
+    }
+
+    // 4. From bulk map, find all RUNNING trains that pass through those future stations
     const snap = await refreshSnapshot();
     if (snap.error) return res.status(502).json({ error: snap.error });
 
-    const runningTrains = snap.rows;
+    const candidates = db.getTrainsAtStations(futureStationCodes, String(train_number));
+    const runningTrains = new Set(snap.rows.map(r => r._tn));
+
+    // Unique running trains where the common station is still AHEAD of them AND within radius
     const relevantTrainNums = new Set();
-    
-    for (const row of runningTrains) {
-      if (row._tn === String(train_number)) continue;
+    for (const c of candidates) {
+      if (!runningTrains.has(c.trainNumber)) continue;
+      const row = snap.index[c.trainNumber];
+      if (!row) continue;
+      
+      const trainKm = row._distanceKm ?? row.curr_distance;
+      if (hasPassedStop(db.getTrainSchedule(c.trainNumber), trainKm, c)) continue;
+      
       const coords = [row._lat, row._lng];
       const dist = haversine(refCoords, coords);
       if (dist <= maxRadius) {
-        relevantTrainNums.add(row._tn);
+        relevantTrainNums.add(c.trainNumber);
       }
     }
 
