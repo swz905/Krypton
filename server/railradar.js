@@ -81,3 +81,38 @@ export function startPoller() {
   };
   poll();
 }
+
+// Per-train live data (real GPS + delay)
+export async function fetchTrainLive(trainNumber, journeyDate) {
+  const key = cfg.railradar.apiKey;
+  if (!key) return { error: 'API key missing' };
+
+  const url = `${cfg.railradar.baseUrl}/api/v1/trains/${trainNumber}?journeyDate=${journeyDate}&dataType=live&apiKey=${key}`;
+  try {
+    const resp = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Krypton/2.0)',
+        'Accept': 'application/json',
+        'Origin': 'https://railradar.in',
+        'Referer': 'https://railradar.in/',
+      },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!resp.ok) return { error: `API returned ${resp.status}` };
+    const json = await resp.json();
+    if (!json.success || !json.data) return { error: json.message || 'No data' };
+
+    const d = json.data;
+    // Return compact top-level info (skip the bulky route array)
+    return {
+      trainNumber: d.trainNumber,
+      journeyDate: d.journeyDate,
+      lastUpdated: d.lastUpdatedAt,
+      location: d.currentLocation,  // { latitude, longitude, stationCode, status, distanceFromOriginKm }
+      delayMinutes: d.overallDelayMinutes,
+      dataSource: d.dataSource,
+    };
+  } catch (err) {
+    return { error: err.message };
+  }
+}

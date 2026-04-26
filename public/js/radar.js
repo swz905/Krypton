@@ -3,6 +3,7 @@ import { layers, markers, prevCoords, clearAll, flyTo, trainIcon, bearing } from
 
 let socket = null;
 let mainTrain = '';
+let journeyDate = '';
 let eventsTimer = null;
 
 export function init(io) {
@@ -24,7 +25,7 @@ export function init(io) {
     liveBar.style.display = 'none';
     clearAll();
     clearEvents();
-    showStatus('radarStatus', 'Scanning live network...', 'info');
+    showStatus('radarStatus', 'Fetching live data...', 'info');
     document.getElementById('radarResults').innerHTML = '';
 
     socket.emit('stop_tracking');
@@ -32,6 +33,7 @@ export function init(io) {
 
     const fd = Object.fromEntries(new FormData(form));
     mainTrain = fd.train_number;
+    journeyDate = fd.journey_date || new Date().toISOString().slice(0, 10);
 
     try {
       const resp = await fetch('/api/scan', {
@@ -44,26 +46,29 @@ export function init(io) {
 
       showStatus('radarStatus', data.message, 'success');
       renderResults(data);
+      renderEvents(data.events || []);
 
-      // Auto-start live tracking
+      // Show live status
+      if (data.ref_live) {
+        const rl = data.ref_live;
+        const delayStr = rl.delay_min != null ? ` • ${rl.delay_min} min late` : '';
+        liveBar.textContent = `LIVE  ${rl.station_name} (${rl.status})${delayStr}`;
+        liveBar.style.display = 'flex';
+      }
+
+      // Auto-start tracking relevant trains
       if (data.trains_to_track && data.trains_to_track.length > 0) {
         socket.emit('start_tracking', {
           trains_to_track: data.trains_to_track,
-          ref_station_code: data.ref_station_code,
-          spatial_range_km: data.spatial_range_km,
           main_train: mainTrain,
         });
-        liveBar.style.display = 'flex';
-        liveBar.textContent = 'LIVE  starting...';
         stopBtn.style.display = 'flex';
         stopBtn.disabled = false;
-      } else {
-        scanBtn.disabled = false;
       }
 
-      // Start polling events
-      fetchEvents();
+      // Start event polling (refreshes every 30s)
       startEventsPolling();
+      scanBtn.disabled = false;
 
     } catch (err) {
       showStatus('radarStatus', err.message, 'error');
@@ -75,28 +80,19 @@ export function init(io) {
     socket.emit('stop_tracking');
     stopBtn.style.display = 'none';
     liveBar.style.display = 'none';
-    scanBtn.disabled = false;
     stopEventsPolling();
     clearEvents();
   });
 
   socket.on('tracking_status', (d) => {
     if (d.status === 'started') {
-      liveBar.style.display = 'flex';
       stopBtn.style.display = 'flex';
-      scanBtn.disabled = true;
     } else if (d.status === 'stopped') {
       stopBtn.style.display = 'none';
-      liveBar.style.display = 'none';
-      scanBtn.disabled = false;
-    } else if (d.status === 'error') {
-      showStatus('radarStatus', d.message, 'error');
     }
   });
 
   socket.on('location_update', (data) => {
-    liveBar.textContent = 'LIVE  ' + new Date().toLocaleTimeString();
-
     for (const t of data.trains || []) {
       const mk = markers[t.train_number];
       if (!mk) continue;
@@ -115,9 +111,7 @@ export function init(io) {
       const row = document.getElementById('r-' + t.train_number);
       if (row) {
         const stnCell = row.querySelector('.stn');
-        const distCell = row.querySelector('.dist');
         if (stnCell) stnCell.textContent = t.current_station || '';
-        if (distCell) distCell.textContent = t.distance_km != null ? t.distance_km + ' km' : '';
       }
     }
   });
@@ -131,11 +125,17 @@ async function fetchEvents() {
     const resp = await fetch('/api/events', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ train_number: mainTrain }),
+      body: JSON.stringify({ train_number: mainTrain, journey_date: journeyDate }),
     });
     const data = await resp.json();
-    if (data.error) { console.warn('[events]', data.error); return; }
+    if (data.error) return;
     renderEvents(data.events || []);
+
+    // Update live bar with delay info
+    if (data.delay_min != null) {
+      const liveBar = document.getElementById('liveStatus');
+      liveBar.textContent = `LIVE  ${data.current_station || ''} • ${data.delay_min} min late • ${new Date().toLocaleTimeString()}`;
+    }
   } catch (err) {
     console.error('[events] fetch failed:', err);
   }
@@ -143,7 +143,7 @@ async function fetchEvents() {
 
 function startEventsPolling() {
   stopEventsPolling();
-  eventsTimer = setInterval(fetchEvents, 30000); // 30s
+  eventsTimer = setInterval(fetchEvents, 30000);
 }
 
 function stopEventsPolling() {
@@ -151,10 +151,8 @@ function stopEventsPolling() {
 }
 
 function clearEvents() {
-  const banner = document.getElementById('eventsBanner');
-  const panel  = document.getElementById('eventsPanel');
-  banner.style.display = 'none';
-  panel.style.display = 'none';
+  document.getElementById('eventsBanner').style.display = 'none';
+  document.getElementById('eventsPanel').style.display = 'none';
   document.getElementById('eventsList').innerHTML = '';
 }
 
@@ -163,20 +161,17 @@ function renderEvents(events) {
   const panel  = document.getElementById('eventsPanel');
   const list   = document.getElementById('eventsList');
 
-  // Imminent events (≤15 min) get the red banner
   const imminent = events.filter(e => e.urgency === 'imminent' || e.urgency === 'soon');
 
   if (imminent.length > 0) {
     const first = imminent[0];
     const label = first.type === 'CROSS' ? '✕ CROSSING' : first.type === 'OVERTAKE' ? '↗ OVERTAKE' : '↙ OVERTAKEN';
-    banner.textContent = label + ' in ~' + first.mins_until + ' min — '
-      + first.other_train + ' ' + first.other_name + ' at ' + first.station_name;
+    banner.textContent = `${label} in ~${first.mins_until} min — ${first.other_train} ${first.other_name} at ${first.station_name}`;
     banner.style.display = 'block';
   } else {
     banner.style.display = 'none';
   }
 
-  // Show all events (capped at 4h ahead)
   if (events.length === 0) {
     panel.style.display = 'none';
     return;
@@ -189,12 +184,11 @@ function renderEvents(events) {
       ? e.mins_until + ' min'
       : Math.floor(e.mins_until / 60) + 'h ' + (e.mins_until % 60) + 'm';
 
-    html += '<div class="event-card ' + e.urgency + '">'
-      + '<span class="event-tag ' + e.type + '">' + e.type + '</span>'
-      + '<span class="event-time">' + timeStr + '</span>'
-      + '<span class="event-detail"><strong>' + e.other_train + '</strong> '
-      + e.other_name + ' at ' + e.station_name + '</span>'
-      + '</div>';
+    html += `<div class="event-card ${e.urgency}">
+      <span class="event-tag ${e.type}">${e.type}</span>
+      <span class="event-time">${timeStr}</span>
+      <span class="event-detail"><strong>${e.other_train}</strong> ${e.other_name} at ${e.station_name}</span>
+    </div>`;
   }
   list.innerHTML = html;
 }
@@ -212,15 +206,14 @@ function renderResults(data) {
     bounds.extend(data.center);
   }
 
-  let html = '<table><thead><tr><th>Train</th><th>Name</th><th>Station</th><th>Dist</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>Train</th><th>Name</th><th>Station</th></tr></thead><tbody>';
   for (const t of data.trains || []) {
     const cls = t.is_reference ? ' class="ref"' : '';
-    html += '<tr id="r-' + t.train_number + '"' + cls + '>'
-      + '<td>' + t.train_number + '</td>'
-      + '<td>' + t.train_name + '</td>'
-      + '<td class="stn">' + (t.current_station || '') + '</td>'
-      + '<td class="dist">' + (t.distance_km != null ? t.distance_km + ' km' : '') + '</td>'
-      + '</tr>';
+    html += `<tr id="r-${t.train_number}"${cls}>
+      <td>${t.train_number}</td>
+      <td>${t.train_name}</td>
+      <td class="stn">${t.current_station || ''}</td>
+    </tr>`;
 
     if (t.coords) {
       const color = t.is_reference ? '#e63946' : '#0077b6';
@@ -240,7 +233,7 @@ function renderResults(data) {
 function tooltip(t) {
   return '<b>' + t.train_number + '</b> ' + t.train_name
     + '<br>' + (t.current_station || '')
-    + (t.distance_km != null ? ' &bull; ' + t.distance_km + ' km' : '');
+    + (t.delay_min != null ? ' • ' + t.delay_min + ' min late' : '');
 }
 
 function showStatus(id, msg, type) {

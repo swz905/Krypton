@@ -34,21 +34,15 @@
     <section id="panel-radar" class="panel active">
       <form id="radarForm" autocomplete="off">
         <label>Train Number
-          <input type="text" name="train_number" placeholder="e.g. 12952" required>
+          <input type="text" name="train_number" placeholder="e.g. 12321" required>
         </label>
         <label>Journey Date
           <input type="date" name="journey_date">
         </label>
-        <label>Reference Station <span class="hint">(optional)</span>
-          <input type="text" name="ref_station" placeholder="Station code or name" list="stationList">
-        </label>
-        <label>Scan Radius (km)
-          <input type="number" name="radius" value="250" min="10" max="3000">
-        </label>
         <div class="btn-row">
           <button type="submit" id="scanBtn" class="btn primary">
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            Scan Radar
+            Track
           </button>
           <button type="button" id="stopBtn" class="btn danger" style="display:none;">
             <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
