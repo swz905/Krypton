@@ -205,6 +205,7 @@ function computeEvents(trainNumber, refSchedule, currentIdx, snap, live) {
   if (!futureStops.length) return [];
 
   const futureStationCodes = futureStops.map(s => s.stnCode);
+  const futureStationSet = new Set(futureStationCodes);
 
   // Ref train timing
   const refDepAbs = refSchedule[0].depAbs || 0;
@@ -213,16 +214,17 @@ function computeEvents(trainNumber, refSchedule, currentIdx, snap, live) {
   const refCurrentAbs = refDepAbs + refMinsRunning;
   const refDirUp = (refSchedule[refSchedule.length - 1].km || 0) > (refSchedule[0].km || 0);
 
-  // Ref ETA at each future station (minutes from now)
+  // Ref ETA at each future station
   const refETA = {};
   for (const s of futureStops) {
     if (s.arrAbs != null) refETA[s.stnCode] = s.arrAbs - refCurrentAbs;
   }
 
-  // Find candidate trains
+  // Find candidate trains at future stations
   const candidates = db.getTrainsAtStations(futureStationCodes, trainNumber);
   const runningTrains = new Set(snap.rows.map(r => r._tn));
 
+  // Group by train: only their stops at our future stations
   const trainStops = {};
   for (const c of candidates) {
     if (!runningTrains.has(c.trainNumber)) continue;
@@ -231,62 +233,128 @@ function computeEvents(trainNumber, refSchedule, currentIdx, snap, live) {
   }
 
   const events = [];
-  const EVENT_WINDOW = 15;
   const MAX_LOOKAHEAD = 4 * 60;
-  const otherCache = {};
+  const CROSS_WINDOW = 15; // ±15 min for crossings
 
   for (const [otherTn, stops] of Object.entries(trainStops)) {
     const otherRow = snap.index[otherTn];
     if (!otherRow) continue;
 
-    if (!(otherTn in otherCache)) {
-      const otherSch = db.getTrainSchedule(otherTn);
-      const otherDepAbs = otherSch.length ? (otherSch[0].depAbs || 0) : 0;
-      otherCache[otherTn] = {
-        currentAbs: otherDepAbs + (otherRow.mins_since_dep || 0),
-        dirUp: otherSch.length >= 2
-          ? (otherSch[otherSch.length - 1].km || 0) > (otherSch[0].km || 0)
-          : true,
-      };
-    }
-    const { currentAbs: otherCurrentAbs, dirUp: otherDirUp } = otherCache[otherTn];
+    const otherSch = db.getTrainSchedule(otherTn);
+    if (!otherSch.length) continue;
+    const otherDepAbs = otherSch[0].depAbs || 0;
+    const otherCurrentAbs = otherDepAbs + (otherRow.mins_since_dep || 0);
+    const otherDirUp = otherSch.length >= 2
+      ? (otherSch[otherSch.length - 1].km || 0) > (otherSch[0].km || 0)
+      : true;
     const sameDirection = refDirUp === otherDirUp;
 
-    for (const stop of stops) {
-      const refEtaMin = refETA[stop.stnCode];
-      if (refEtaMin == null || stop.arrAbs == null) continue;
+    if (!sameDirection) {
+      // ── CROSSING: opposite direction, same station within ±15 min ──
+      for (const stop of stops) {
+        const refEtaMin = refETA[stop.stnCode];
+        if (refEtaMin == null || stop.arrAbs == null) continue;
+        const otherEtaMin = stop.arrAbs - otherCurrentAbs;
 
-      const otherEtaMin = stop.arrAbs - otherCurrentAbs;
+        if (refEtaMin < -5 || refEtaMin > MAX_LOOKAHEAD) continue;
+        if (otherEtaMin < -30) continue;
 
-      if (refEtaMin < -5 || refEtaMin > MAX_LOOKAHEAD) continue;
-      if (otherEtaMin < -30) continue;
+        const gap = Math.abs(otherEtaMin - refEtaMin);
+        if (gap > CROSS_WINDOW) continue;
 
-      const gap = otherEtaMin - refEtaMin;
-      if (Math.abs(gap) > EVENT_WINDOW) continue;
+        const stnName = db.getStationNames([stop.stnCode])[stop.stnCode] || stop.stnCode;
+        events.push({
+          type: 'CROSS',
+          other_train: otherTn,
+          other_name: otherRow._name || 'N/A',
+          station_code: stop.stnCode,
+          station_name: stnName,
+          station_coords: db.getStationCoords(stop.stnCode),
+          mins_until: Math.max(0, Math.round(refEtaMin)),
+          same_direction: false,
+        });
+      }
+    } else {
+      // ── OVERTAKE: same direction, ORDER REVERSAL between two common stations ──
+      // Get the other train's common future stops, sorted by km in ref's route order
+      // We need stops that are common AND in the future for BOTH trains
 
-      const stnCoords = db.getStationCoords(stop.stnCode);
-      const stnName = db.getStationNames([stop.stnCode])[stop.stnCode] || stop.stnCode;
+      // Other train's current km
+      const otherKm = otherRow.curr_distance;
 
-      let eventType = 'CROSS';
-      if (sameDirection) {
-        eventType = gap > 0 ? 'OVERTAKE' : 'OVERTAKEN';
+      // Build ordered list of common stations with ETAs for both trains
+      // Use ref's route order (futureStops) to maintain sequence
+      const commonStops = [];
+      const otherStopMap = {};
+      for (const s of stops) {
+        otherStopMap[s.stnCode] = s;
       }
 
-      events.push({
-        type: eventType,
-        other_train: otherTn,
-        other_name: otherRow._name || 'N/A',
-        station_code: stop.stnCode,
-        station_name: stnName,
-        station_coords: stnCoords,
-        gap_min: Math.round(gap),
-        mins_until: Math.max(0, Math.round(refEtaMin)),
-        same_direction: sameDirection,
-      });
+      for (const fs of futureStops) {
+        const os = otherStopMap[fs.stnCode];
+        if (!os || os.arrAbs == null || fs.arrAbs == null) continue;
+
+        const refEta = fs.arrAbs - refCurrentAbs;
+        const otherEta = os.arrAbs - otherCurrentAbs;
+
+        // Both must be in the future
+        if (refEta < -5 || otherEta < -30) continue;
+        if (refEta > MAX_LOOKAHEAD) continue;
+
+        // Other train must not have passed this station
+        if (otherKm != null && os.km != null && otherKm > os.km + 5) continue;
+
+        commonStops.push({
+          stnCode: fs.stnCode,
+          refEta,
+          otherEta,
+          diff: refEta - otherEta, // negative = ref arrives first, positive = other arrives first
+        });
+      }
+
+      // Check consecutive pairs for order reversal
+      for (let i = 0; i < commonStops.length - 1; i++) {
+        const a = commonStops[i];
+        const b = commonStops[i + 1];
+
+        // At station A: diff is the arrival order
+        // At station B: diff is the arrival order
+        // If sign flips → overtake happened between A and B
+
+        if (a.diff < 0 && b.diff > 0) {
+          // Ref was first at A, but other is first at B → ref gets OVERTAKEN
+          const stnName = db.getStationNames([b.stnCode])[b.stnCode] || b.stnCode;
+          events.push({
+            type: 'OVERTAKEN',
+            other_train: otherTn,
+            other_name: otherRow._name || 'N/A',
+            station_code: b.stnCode,
+            station_name: stnName,
+            station_coords: db.getStationCoords(b.stnCode),
+            mins_until: Math.max(0, Math.round(b.refEta)),
+            same_direction: true,
+          });
+          break; // one event per train
+        } else if (a.diff > 0 && b.diff < 0) {
+          // Other was first at A, but ref is first at B → ref OVERTAKES
+          const stnName = db.getStationNames([b.stnCode])[b.stnCode] || b.stnCode;
+          events.push({
+            type: 'OVERTAKE',
+            other_train: otherTn,
+            other_name: otherRow._name || 'N/A',
+            station_code: b.stnCode,
+            station_name: stnName,
+            station_coords: db.getStationCoords(b.stnCode),
+            mins_until: Math.max(0, Math.round(b.refEta)),
+            same_direction: true,
+          });
+          break; // one event per train
+        }
+      }
     }
   }
 
-  // Deduplicate: best event per train
+  // Sort by time, deduplicate per train (keep soonest)
   const best = {};
   for (const e of events) {
     if (!best[e.other_train] || e.mins_until < best[e.other_train].mins_until) {
