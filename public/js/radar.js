@@ -185,6 +185,21 @@ function renderResults(data) {
   html += '</tbody></table>';
   container.innerHTML = html;
   flyTo(bounds);
+
+  // Add click listener for rows
+  const tbody = container.querySelector('tbody');
+  if (tbody) {
+    tbody.addEventListener('click', e => {
+      const tr = e.target.closest('tr');
+      if (!tr || !tr.id) return;
+      const tn = tr.id.replace('r-', '');
+      const mk = markers[tn];
+      if (mk) {
+        map.flyTo(mk.getLatLng(), 8, { animate: true, duration: 1 });
+        mk.openTooltip();
+      }
+    });
+  }
 }
 
 function tooltip(t) {

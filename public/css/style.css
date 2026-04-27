@@ -184,7 +184,7 @@ input[type="range"] { margin-top: 4px; accent-color: var(--accent); }
   text-overflow: ellipsis;
   max-width: 120px;
 }
-.results tr:hover td { background: var(--bg); }
+.results tr:hover td { background: var(--bg); cursor: pointer; }
 .results tr.ref td { font-weight: 600; color: var(--accent); }
 .results .dist { font-variant-numeric: tabular-nums; color: var(--text-2); }
 

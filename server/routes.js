@@ -80,10 +80,10 @@ router.post('/api/scan', async (req, res) => {
       const row = snap.index[c.trainNumber];
       if (!row) continue;
       
-      const trainKm = row._distanceKm ?? row.curr_distance;
-      if (hasPassedStop(db.getTrainSchedule(c.trainNumber), trainKm, c)) continue;
-      
       const coords = [row._lat, row._lng];
+      
+      if (hasPassedStop(db.getTrainSchedule(c.trainNumber), coords, c.stnCode)) continue;
+      
       const dist = haversine(refCoords, coords);
       if (dist <= maxRadius) {
         relevantTrainNums.add(c.trainNumber);
@@ -288,17 +288,30 @@ function classifyCommonDirection(commonStops, refSchedule, otherSchedule) {
   return routeKmDirection(refSchedule) === routeKmDirection(otherSchedule);
 }
 
-function routeKmDirection(schedule) {
-  const first = schedule.find(s => s.km != null);
-  const last = [...schedule].reverse().find(s => s.km != null);
-  if (!first || !last || first.km === last.km) return true;
-  return last.km > first.km;
-}
+function hasPassedStop(schedule, currentCoords, stopCode) {
+  if (!currentCoords || !stopCode || !schedule.length) return false;
+  
+  // Find the index of the target stop
+  const targetIdx = schedule.findIndex(s => s.stnCode === stopCode);
+  if (targetIdx < 0) return false;
 
-function hasPassedStop(schedule, currentKm, stop) {
-  if (currentKm == null || stop?.km == null) return false;
-  const dirUp = routeKmDirection(schedule);
-  return dirUp ? currentKm > stop.km + 5 : currentKm < stop.km - 5;
+  // Approximate current position by finding the geographically closest station in its schedule
+  let currentIdx = 0;
+  let minDist = Infinity;
+  for (let i = 0; i < schedule.length; i++) {
+    const sCoords = db.getStationCoords(schedule[i].stnCode);
+    if (sCoords) {
+      const d = haversine(currentCoords, sCoords);
+      if (d < minDist) {
+        minDist = d;
+        currentIdx = i;
+      }
+    }
+  }
+
+  // If the closest station is AFTER the target stop, it has likely already passed it.
+  // Add a small buffer (e.g., 2 stations) to prevent false positives when trains are between stations.
+  return currentIdx > targetIdx + 2;
 }
 
 function computeEvents(trainNumber, refSchedule, currentIdx, snap, live, options = {}) {
@@ -409,7 +422,8 @@ function computeEvents(trainNumber, refSchedule, currentIdx, snap, live, options
         if (refEta > MAX_LOOKAHEAD) continue;
 
         // Other train must not have passed this station
-        if (hasPassedStop(otherSch, otherKm, os)) continue;
+        const coords = [otherRow._lat, otherRow._lng];
+        if (hasPassedStop(otherSch, coords, os.stnCode)) continue;
 
         commonStops.push({
           stnCode: fs.stnCode,
