@@ -56,13 +56,26 @@ export function setupTracking(io) {
 
               const prevLive = getRecentLive(tn);
               let trend = 'stable';
-              if (prevLive && prevLive.distanceToReferenceKm != null && dist != null) {
-                const prevDist = prevLive.distanceToReferenceKm;
-                if (dist > prevDist + 0.1) trend = 'increasing';
-                else if (dist < prevDist - 0.1) trend = 'decreasing';
+              let speed = 0;
+
+              if (prevLive) {
+                if (prevLive.distanceToReferenceKm != null && dist != null) {
+                  const prevDist = prevLive.distanceToReferenceKm;
+                  if (dist > prevDist + 0.1) trend = 'increasing';
+                  else if (dist < prevDist - 0.1) trend = 'decreasing';
+                }
+
+                // Calculate speed (km/h)
+                const distMoved = haversine(prevLive.coords, coords);
+                const timeElapsedHr = (Date.now() - prevLive.fetchedAt) / 3600000;
+                if (timeElapsedHr > 0 && distMoved >= 0.1) {
+                  speed = Math.round(distMoved / timeElapsedHr);
+                } else if (prevLive.speed) {
+                  speed = prevLive.speed; // carry over recent speed if barely moved or fast update
+                }
               }
 
-              rememberLive(tn, live, coords, dist);
+              rememberLive(tn, live, coords, dist, speed);
 
               socket.emit('location_update', {
                 trains: [{
@@ -71,6 +84,7 @@ export function setupTracking(io) {
                   coords,
                   distance_km: dist != null ? Math.round(dist * 10) / 10 : null,
                   trend,
+                  speed,
                   is_reference: tn === mainTrain,
                   current_station: loc.stationCode || '',
                   status: loc.status || '',
@@ -119,13 +133,14 @@ export function getRecentLive(trainNumber) {
   return cached;
 }
 
-function rememberLive(trainNumber, live, coords, distanceToReferenceKm) {
+function rememberLive(trainNumber, live, coords, distanceToReferenceKm, speed = 0) {
   const loc = live.location || {};
   liveCache.set(String(trainNumber), {
     fetchedAt: Date.now(),
     trainNumber: String(trainNumber),
     coords,
     distanceToReferenceKm,
+    speed,
     stationCode: loc.stationCode || '',
     status: loc.status || '',
     distanceFromOriginKm: loc.distanceFromOriginKm ?? null,

@@ -120,6 +120,11 @@ export function init(io) {
           distCell.textContent = t.distance_km + ' km' + arrow;
           row.dataset.dist = t.distance_km;
         }
+
+        const spdCell = row.querySelector('.spd');
+        if (spdCell && t.speed != null) {
+          spdCell.textContent = t.speed + ' km/h';
+        }
       }
     }
 
@@ -153,16 +158,18 @@ function renderResults(data) {
     bounds.extend(data.center);
   }
 
-  let html = '<table><thead><tr><th>Train</th><th>Name</th><th>Station</th><th>Distance</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>Train</th><th>Name</th><th>Station</th><th>Distance</th><th>Speed</th></tr></thead><tbody>';
   for (const t of data.trains || []) {
     const cls = t.is_reference ? ' class="ref"' : '';
     const distStr = t.distance_km != null ? t.distance_km + ' km' : '';
+    const spdStr = t.speed != null ? t.speed + ' km/h' : '-';
     const distVal = t.distance_km != null ? t.distance_km : Infinity;
     html += `<tr id="r-${t.train_number}"${cls} data-dist="${distVal}">
       <td>${t.train_number}</td>
       <td>${t.train_name}</td>
       <td class="stn">${t.current_station || ''}</td>
       <td class="dist">${distStr}</td>
+      <td class="spd">${spdStr}</td>
     </tr>`;
 
     if (t.coords) {
@@ -181,9 +188,19 @@ function renderResults(data) {
 }
 
 function tooltip(t) {
+  let extra = '';
+  if (t.distance_km != null && !t.is_reference) {
+    let arrow = '';
+    if (t.trend === 'increasing') arrow = ' ↗';
+    else if (t.trend === 'decreasing') arrow = ' ↘';
+    extra += `<br>Dist: ${t.distance_km} km${arrow}`;
+  }
+  if (t.speed != null) extra += ` • Spd: ${t.speed} km/h`;
+
   return '<b>' + t.train_number + '</b> ' + t.train_name
     + '<br>' + (t.current_station || '')
-    + (t.delay_min != null ? ' • ' + t.delay_min + ' min late' : '');
+    + (t.delay_min != null ? ' • ' + t.delay_min + ' min late' : '')
+    + extra;
 }
 
 function showStatus(id, msg, type) {
