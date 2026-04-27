@@ -137,7 +137,7 @@ router.post('/api/scan', async (req, res) => {
       if (!row) continue;
       const coords = [row._lat, row._lng];
       const dist = haversine(refCoords, coords);
-      if (dist > maxRadius) continue; // radius filter
+      if (dist > searchRadius) continue; // radius filter
       results.push({
         train_number: tn,
         train_name: row._name || 'N/A',
