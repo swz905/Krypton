@@ -154,7 +154,7 @@ router.post('/api/scan', async (req, res) => {
     const trackedNums = results.filter(r => !r.is_reference).map(r => r.train_number);
 
     res.json({
-      message: `${trackedNums.length} trains found within ${maxRadius} km of ${train_number}.`,
+      message: `${trackedNums.length} trains found within ${searchRadius} km of ${train_number}.`,
       trains: results,
       events: [],
 
@@ -170,7 +170,7 @@ router.post('/api/scan', async (req, res) => {
       },
       trains_to_track: [String(train_number), ...trackedNums],
       journey_date: jDate,
-      radius_km: maxRadius,
+      radius_km: searchRadius,
     });
   } catch (err) {
     console.error('[scan]', err);
