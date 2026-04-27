@@ -74,20 +74,33 @@ router.post('/api/scan', async (req, res) => {
     const runningTrains = new Set(snap.rows.map(r => r._tn));
 
     // Unique running trains where the common station is still AHEAD of them AND within radius
-    const relevantTrainNums = new Set();
+    // Group candidates by train number first
+    const candidatesByTrain = new Map();
     for (const c of candidates) {
       if (!runningTrains.has(c.trainNumber)) continue;
-      const row = snap.index[c.trainNumber];
-      if (!row) continue;
-      
+      if (!snap.index[c.trainNumber]) continue;
+      if (!candidatesByTrain.has(c.trainNumber)) candidatesByTrain.set(c.trainNumber, []);
+      candidatesByTrain.get(c.trainNumber).push(c);
+    }
+
+    const relevantTrainNums = new Set();
+    for (const [tn, entries] of candidatesByTrain) {
+      const row = snap.index[tn];
       const coords = [row._lat, row._lng];
-      
-      if (hasPassedStop(db.getTrainSchedule(c.trainNumber), coords, c.stnCode)) continue;
-      
+      const otherSchedule = db.getTrainSchedule(tn);
+
+      // Skip if this train has already passed ALL common stations
+      const hasUnpassed = entries.some(c => !hasPassedStop(otherSchedule, coords, c.stnCode));
+      if (!hasUnpassed) continue;
+
+      // Radius check
       const dist = haversine(refCoords, coords);
-      if (dist <= maxRadius) {
-        relevantTrainNums.add(c.trainNumber);
-      }
+      if (dist > maxRadius) continue;
+
+      // Filter out: opposite direction AND behind reference train
+      if (isOppositeAndBehind(refSchedule, currentIdx, otherSchedule, refCoords, coords)) continue;
+
+      relevantTrainNums.add(tn);
     }
 
     // 5. Build results — only the relevant trains
@@ -285,7 +298,8 @@ function classifyCommonDirection(commonStops, refSchedule, otherSchedule) {
     if (score !== 0) return score > 0;
   }
 
-  return routeKmDirection(refSchedule) === routeKmDirection(otherSchedule);
+  // Fallback: if we can't determine direction from common stops, assume same direction
+  return true;
 }
 
 function hasPassedStop(schedule, currentCoords, stopCode) {
@@ -312,6 +326,57 @@ function hasPassedStop(schedule, currentCoords, stopCode) {
   // If the closest station is AFTER the target stop, it has likely already passed it.
   // Add a small buffer (e.g., 2 stations) to prevent false positives when trains are between stations.
   return currentIdx > targetIdx + 2;
+}
+
+// Returns true if the other train is traveling in the opposite direction
+// AND is geographically behind the reference train (i.e. moving away).
+function isOppositeAndBehind(refSchedule, refCurrentIdx, otherSchedule, refCoords, otherCoords) {
+  // 1. Determine direction by comparing common station order
+  const refIdxMap = new Map(refSchedule.map((s, i) => [s.stnCode, i]));
+  const commonPairs = []; // { refIdx, otherIdx }
+  for (let oi = 0; oi < otherSchedule.length; oi++) {
+    const ri = refIdxMap.get(otherSchedule[oi].stnCode);
+    if (ri != null) commonPairs.push({ refIdx: ri, otherIdx: oi });
+  }
+
+  if (commonPairs.length < 2) return false; // can't determine direction
+
+  // Score: if common stations appear in the same order in both schedules → same direction
+  // If reversed → opposite direction
+  let score = 0;
+  for (let i = 1; i < commonPairs.length; i++) {
+    const refDelta = commonPairs[i].refIdx - commonPairs[i - 1].refIdx;
+    const otherDelta = commonPairs[i].otherIdx - commonPairs[i - 1].otherIdx;
+    // Same sign = same direction, opposite sign = opposite direction
+    if ((refDelta > 0 && otherDelta > 0) || (refDelta < 0 && otherDelta < 0)) score++;
+    else score--;
+  }
+
+  const isOpposite = score < 0;
+  if (!isOpposite) return false; // same direction — keep it
+
+  // 2. Determine if the other train is BEHIND the reference train
+  // Compute ref train's heading: vector from current position toward the next future station
+  const futureStops = refSchedule.slice(refCurrentIdx + 1);
+  let headingTarget = null;
+  for (const s of futureStops) {
+    const c = db.getStationCoords(s.stnCode);
+    if (c) { headingTarget = c; break; }
+  }
+  if (!headingTarget) return false;
+
+  // Direction vector (ref → future station)
+  const dirLat = headingTarget[0] - refCoords[0];
+  const dirLng = headingTarget[1] - refCoords[1];
+
+  // Vector from ref → other train
+  const toOtherLat = otherCoords[0] - refCoords[0];
+  const toOtherLng = otherCoords[1] - refCoords[1];
+
+  // Dot product: positive = other train is AHEAD, negative = BEHIND
+  const dot = dirLat * toOtherLat + dirLng * toOtherLng;
+
+  return dot < 0; // opposite direction AND behind → filter out
 }
 
 function computeEvents(trainNumber, refSchedule, currentIdx, snap, live, options = {}) {
