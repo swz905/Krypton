@@ -118,8 +118,23 @@ export function init(io) {
           if (t.trend === 'increasing') arrow = ' ↗';
           else if (t.trend === 'decreasing') arrow = ' ↘';
           distCell.textContent = t.distance_km + ' km' + arrow;
+          row.dataset.dist = t.distance_km;
         }
       }
+    }
+
+    // Re-sort table by distance
+    const tbody = document.querySelector('#radarResults tbody');
+    if (tbody) {
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      rows.sort((a, b) => {
+        if (a.classList.contains('ref')) return -1;
+        if (b.classList.contains('ref')) return 1;
+        const distA = parseFloat(a.dataset.dist) || Infinity;
+        const distB = parseFloat(b.dataset.dist) || Infinity;
+        return distA - distB;
+      });
+      rows.forEach(r => tbody.appendChild(r));
     }
   });
 }
@@ -142,7 +157,8 @@ function renderResults(data) {
   for (const t of data.trains || []) {
     const cls = t.is_reference ? ' class="ref"' : '';
     const distStr = t.distance_km != null ? t.distance_km + ' km' : '';
-    html += `<tr id="r-${t.train_number}"${cls}>
+    const distVal = t.distance_km != null ? t.distance_km : Infinity;
+    html += `<tr id="r-${t.train_number}"${cls} data-dist="${distVal}">
       <td>${t.train_number}</td>
       <td>${t.train_name}</td>
       <td class="stn">${t.current_station || ''}</td>
