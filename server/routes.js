@@ -27,7 +27,8 @@ router.get('/api/stations', (req, res) => {
 router.post('/api/scan', async (req, res) => {
   try {
     const { train_number, journey_date, radius } = req.body;
-    const maxRadius = Math.max(10, Math.min(parseInt(radius) || 250, 3000));
+    const uiRadius = parseInt(radius) || 250;
+    const searchRadius = Math.max(500, Math.min(uiRadius, 3000));
     if (!train_number) return res.status(400).json({ error: 'Missing train number.' });
 
     // 1. Get REAL live position of the reference train
@@ -83,6 +84,7 @@ router.post('/api/scan', async (req, res) => {
       candidatesByTrain.get(c.trainNumber).push(c);
     }
 
+    console.log(`\n[scan] --- Filtering candidates for ref train ${train_number} (Search Radius: ${searchRadius}km) ---`);
     const relevantTrainNums = new Set();
     for (const [tn, entries] of candidatesByTrain) {
       const row = snap.index[tn];
@@ -91,17 +93,28 @@ router.post('/api/scan', async (req, res) => {
 
       // Skip if this train has already passed ALL common stations
       const hasUnpassed = entries.some(c => !hasPassedStop(otherSchedule, coords, c.stnCode));
-      if (!hasUnpassed) continue;
+      if (!hasUnpassed) {
+        console.log(`[scan] ❌ Rejected ${tn} (${row._name || 'Unknown'}) - Has already passed all common stations.`);
+        continue;
+      }
 
       // Radius check
       const dist = haversine(refCoords, coords);
-      if (dist > maxRadius) continue;
+      if (dist > searchRadius) {
+        console.log(`[scan] ❌ Rejected ${tn} (${row._name || 'Unknown'}) - Distance ${Math.round(dist)}km exceeds radius ${searchRadius}km.`);
+        continue;
+      }
 
       // Filter out: opposite direction AND behind reference train
-      if (isOppositeAndBehind(refSchedule, currentIdx, otherSchedule, refCoords, coords)) continue;
+      if (isOppositeAndBehind(refSchedule, currentIdx, otherSchedule, refCoords, coords)) {
+        console.log(`[scan] ❌ Rejected ${tn} (${row._name || 'Unknown'}) - Moving in opposite direction AND is geographically behind.`);
+        continue;
+      }
 
+      console.log(`[scan] ✅ Accepted ${tn} (${row._name || 'Unknown'}) - Distance: ${Math.round(dist)}km`);
       relevantTrainNums.add(tn);
     }
+    console.log(`[scan] --- Filtering complete: ${relevantTrainNums.size} trains accepted ---\n`);
 
     // 5. Build results — only the relevant trains
     const results = [];
