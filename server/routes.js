@@ -170,6 +170,7 @@ router.post('/api/scan', async (req, res) => {
       },
       trains_to_track: [String(train_number), ...trackedNums],
       journey_date: jDate,
+      ui_radius: uiRadius,
       radius_km: searchRadius,
     });
   } catch (err) {

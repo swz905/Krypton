@@ -125,6 +125,17 @@ export function init(io) {
         if (spdCell && t.speed != null) {
           spdCell.textContent = t.speed + ' km/h';
         }
+
+        // Dynamically hide/show based on live distance
+        if (t.distance_km != null && !t.is_reference) {
+          if (t.distance_km > window.currentUiRadius) {
+            row.style.display = 'none';
+            if (map.hasLayer(mk)) mk.removeFrom(map);
+          } else {
+            row.style.display = '';
+            if (!map.hasLayer(mk)) mk.addTo(layers.trains);
+          }
+        }
       }
     }
 
@@ -158,13 +169,19 @@ function renderResults(data) {
     bounds.extend(data.center);
   }
 
+  window.currentUiRadius = data.ui_radius || Infinity;
+
   let html = '<table><thead><tr><th>Train</th><th>Name</th><th>Station</th><th>Distance</th><th>Speed</th></tr></thead><tbody>';
   for (const t of data.trains || []) {
     const cls = t.is_reference ? ' class="ref"' : '';
     const distStr = t.distance_km != null ? t.distance_km + ' km' : '';
     const spdStr = t.speed != null ? t.speed + ' km/h' : '-';
     const distVal = t.distance_km != null ? t.distance_km : Infinity;
-    html += `<tr id="r-${t.train_number}"${cls} data-dist="${distVal}">
+    
+    const isVisible = t.is_reference || distVal <= window.currentUiRadius;
+    const styleAttr = isVisible ? '' : 'style="display: none;"';
+
+    html += `<tr id="r-${t.train_number}"${cls} data-dist="${distVal}" ${styleAttr}>
       <td>${t.train_number}</td>
       <td>${t.train_name}</td>
       <td class="stn">${t.current_station || ''}</td>
@@ -175,11 +192,15 @@ function renderResults(data) {
     if (t.coords) {
       const color = t.is_reference ? '#e63946' : '#0077b6';
       const mk = L.marker(t.coords, { icon: trainIcon(color, null) })
-        .addTo(layers.trains)
         .bindTooltip(tooltip(t), { direction: 'top' });
+      
+      if (isVisible) {
+        mk.addTo(layers.trains);
+        bounds.extend(t.coords);
+      }
+      
       markers[t.train_number] = mk;
       prevCoords[t.train_number] = t.coords;
-      bounds.extend(t.coords);
     }
   }
   html += '</tbody></table>';
