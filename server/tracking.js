@@ -43,7 +43,10 @@ export function setupTracking(io) {
             try {
               const dateForTrain = trainDates[tn] || journeyDate;
               const live = await fetchTrainLive(tn, dateForTrain);
-              if (live.error || !live.location) continue;
+              if (live.error || !live.location) {
+                if (live.error) console.log(`[track] ${tn} date=${dateForTrain} → error: ${live.error}`);
+                continue;
+              }
 
               const loc = live.location;
               const coords = [loc.latitude, loc.longitude];
