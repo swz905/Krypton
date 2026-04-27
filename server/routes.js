@@ -132,12 +132,22 @@ router.post('/api/scan', async (req, res) => {
       status: loc.status,
     });
 
+    // Build per-train journey dates from snapshot's current_day
+    const trainDates = {};
+    const todayMs = Date.now();
+
     for (const tn of relevantTrainNums) {
       const row = snap.index[tn];
       if (!row) continue;
       const coords = [row._lat, row._lng];
       const dist = haversine(refCoords, coords);
       if (dist > searchRadius) continue; // radius filter
+
+      // Compute the correct departure date for this train instance
+      const currentDay = row.current_day ?? row.currentDay ?? 1;
+      const depDate = new Date(todayMs - (currentDay - 1) * 86400000);
+      trainDates[tn] = depDate.toISOString().slice(0, 10);
+
       results.push({
         train_number: tn,
         train_name: row._name || 'N/A',
@@ -147,6 +157,9 @@ router.post('/api/scan', async (req, res) => {
         current_station: row.current_station_name || row.current_station || '',
       });
     }
+
+    // Reference train uses user-supplied date
+    trainDates[String(train_number)] = jDate;
 
     results.sort((a, b) => a.distance_km - b.distance_km);
 
@@ -170,6 +183,7 @@ router.post('/api/scan', async (req, res) => {
       },
       trains_to_track: [String(train_number), ...trackedNums],
       journey_date: jDate,
+      train_dates: trainDates,
       ui_radius: uiRadius,
       radius_km: searchRadius,
     });

@@ -27,6 +27,7 @@ export function setupTracking(io) {
       const mainTrain = String(data.main_train || '');
       const trains = Array.from(new Set([mainTrain, ...(data.trains_to_track || []).map(String)].filter(Boolean)));
       const journeyDate = data.journey_date || new Date().toISOString().slice(0, 10);
+      const trainDates = data.train_dates || {};
       let refCoords = data.ref_coords;
       let closestKm = Infinity;
 
@@ -40,7 +41,8 @@ export function setupTracking(io) {
             if (abortController.signal.aborted) break;
 
             try {
-              const live = await fetchTrainLive(tn, journeyDate);
+              const dateForTrain = trainDates[tn] || journeyDate;
+              const live = await fetchTrainLive(tn, dateForTrain);
               if (live.error || !live.location) continue;
 
               const loc = live.location;

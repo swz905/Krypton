@@ -62,6 +62,7 @@ export function init(io) {
           trains_to_track: trackedTrains,
           main_train: mainTrain,
           journey_date: data.journey_date,
+          train_dates: data.train_dates || {},
           ref_coords: data.center,
         });
         stopBtn.style.display = 'flex';
