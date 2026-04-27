@@ -65,15 +65,22 @@ export function setupTracking(io) {
                   else if (dist < prevDist - 0.1) trend = 'decreasing';
                 }
 
-                // Calculate speed (km/h)
+                // Calculate speed (km/h) using actual GPS timestamps from API
+                const currentTs = live.lastUpdated ? new Date(live.lastUpdated).getTime() : Date.now();
+                const prevTs = prevLive.lastUpdatedTs || prevLive.fetchedAt;
+                
                 const distMoved = haversine(prevLive.coords, coords);
-                const timeElapsedHr = (Date.now() - prevLive.fetchedAt) / 3600000;
+                const timeElapsedHr = (currentTs - prevTs) / 3600000;
+                
                 if (timeElapsedHr > 0 && distMoved >= 0.1) {
                   speed = Math.round(distMoved / timeElapsedHr);
                 } else if (prevLive.speed) {
-                  speed = prevLive.speed; // carry over recent speed if barely moved or fast update
+                  speed = prevLive.speed; // carry over recent speed if barely moved or same timestamp
                 }
               }
+
+              // Attach current timestamp so it can be saved in cache
+              live._currentTs = live.lastUpdated ? new Date(live.lastUpdated).getTime() : Date.now();
 
               rememberLive(tn, live, coords, dist, speed);
 
@@ -137,6 +144,7 @@ function rememberLive(trainNumber, live, coords, distanceToReferenceKm, speed = 
   const loc = live.location || {};
   liveCache.set(String(trainNumber), {
     fetchedAt: Date.now(),
+    lastUpdatedTs: live._currentTs || Date.now(),
     trainNumber: String(trainNumber),
     coords,
     distanceToReferenceKm,
