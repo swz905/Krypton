@@ -12,7 +12,7 @@ const STAGGER_DELAY_MS = 2000;
 const FAR_CYCLE_PAUSE_MS = 10000;
 const NEAR_CYCLE_PAUSE_MS = 5000;
 const IMMINENT_CYCLE_PAUSE_MS = 2000;
-const LIVE_CACHE_TTL_MS = 2 * 60 * 1000;
+const LIVE_CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes (must be longer than loop duration + GPS ping interval)
 
 const clients = new Map();
 const liveCache = new Map();
@@ -79,8 +79,12 @@ export function setupTracking(io) {
                 
                 if (timeElapsedHr > 0 && distMoved >= 0.1) {
                   speed = Math.round(distMoved / timeElapsedHr);
+                  console.log(`[speed] ${tn}: moved ${distMoved.toFixed(2)}km in ${timeElapsedHr.toFixed(3)}hr -> ${speed} km/h`);
                 } else if (prevLive.speed) {
                   speed = prevLive.speed; // carry over recent speed if barely moved or same timestamp
+                } else if (timeElapsedHr > 0 || distMoved > 0) {
+                  // Log why it didn't calculate speed if it moved or time passed
+                  console.log(`[speed] ${tn}: skip calc. distMoved=${distMoved.toFixed(3)}km, timeElapsedHr=${timeElapsedHr.toFixed(3)}hr`);
                 }
               }
 

@@ -143,13 +143,16 @@ router.post('/api/scan', async (req, res) => {
       const dist = haversine(refCoords, coords);
       if (dist > searchRadius) continue; // radius filter
 
-      // Compute the correct departure date for this train instance (use LOCAL time, not UTC)
+      // Compute the correct departure date for this train instance in IST
       const currentDay = row.current_day ?? row.currentDay ?? 1;
-      const depDate = new Date(todayMs - (currentDay - 1) * 86400000);
-      const yyyy = depDate.getFullYear();
-      const mm = String(depDate.getMonth() + 1).padStart(2, '0');
-      const dd = String(depDate.getDate()).padStart(2, '0');
-      trainDates[tn] = `${yyyy}-${mm}-${dd}`;
+      const daysOffset = -(currentDay - 1);
+      
+      const d = new Date();
+      d.setUTCHours(d.getUTCHours() + 5);
+      d.setUTCMinutes(d.getUTCMinutes() + 30);
+      d.setUTCDate(d.getUTCDate() + daysOffset);
+      
+      trainDates[tn] = d.toISOString().slice(0, 10);
 
       results.push({
         train_number: tn,
