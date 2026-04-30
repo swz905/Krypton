@@ -1,5 +1,5 @@
 // public/js/reach.js — Reachability tab logic
-import { layers, clearAll, flyTo } from './map.js';
+import { map, layers, clearAll, flyTo } from './map.js';
 
 export function init() {
   const form = document.getElementById('reachForm');
@@ -66,7 +66,7 @@ function renderReach(data) {
       .bindTooltip(`<b>${s.name}</b> (${s.code})<br>${s.train_number} ${s.train_name}<br>${s.travel_time_str} • ${Math.round(s.geo_distance_km)} km`, { direction: 'top' });
     bounds.extend(s.coords);
 
-    html += `<tr>
+    html += `<tr data-lat="${s.coords[0]}" data-lng="${s.coords[1]}" style="cursor: pointer;">
       <td>${s.name} (${s.code})</td>
       <td>${s.train_number}</td>
       <td>${s.travel_time_str}</td>
@@ -74,8 +74,22 @@ function renderReach(data) {
     </tr>`;
   }
   html += `</tbody></table>`;
-  document.getElementById('reachResults').innerHTML = html;
+  const resContainer = document.getElementById('reachResults');
+  resContainer.innerHTML = html;
   flyTo(bounds);
+
+  const tbody = resContainer.querySelector('tbody');
+  if (tbody) {
+    tbody.addEventListener('click', e => {
+      const tr = e.target.closest('tr');
+      if (!tr) return;
+      const lat = parseFloat(tr.dataset.lat);
+      const lng = parseFloat(tr.dataset.lng);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        map.flyTo([lat, lng], 10, { animate: true, duration: 1 });
+      }
+    });
+  }
 }
 
 function showStatus(id, msg, type) {

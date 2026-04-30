@@ -1,5 +1,5 @@
 // public/js/radar.js — Radar tab + crossing/overtake events
-import { layers, markers, prevCoords, clearAll, flyTo, trainIcon, bearing } from './map.js';
+import { map, layers, markers, prevCoords, clearAll, flyTo, trainIcon, bearing } from './map.js';
 
 let socket = null;
 let mainTrain = '';
@@ -105,7 +105,7 @@ export function init(io) {
 
       mk.setLatLng(c);
       mk.setIcon(trainIcon(t.is_reference ? '#e63946' : '#0077b6', head));
-      mk.setTooltipContent(tooltip(t));
+      mk.setTooltipContent(tooltip(t)).setPopupContent(tooltip(t));
       prevCoords[t.train_number] = c;
 
       const row = document.getElementById('r-' + t.train_number);
@@ -181,8 +181,15 @@ function renderResults(data) {
     
     const isVisible = t.is_reference || distVal <= window.currentUiRadius;
     const styleAttr = isVisible ? '' : 'style="display: none;"';
+    
+    const classNames = [];
+    if (t.is_reference) classNames.push('ref');
+    if (t.direction === 'opposite') classNames.push('opp');
+    else if (t.direction === 'same') classNames.push('same');
+    
+    const clsAttr = classNames.length ? ` class="${classNames.join(' ')}"` : '';
 
-    html += `<tr id="r-${t.train_number}"${cls} data-dist="${distVal}" ${styleAttr}>
+    html += `<tr id="r-${t.train_number}"${clsAttr} data-dist="${distVal}" ${styleAttr}>
       <td>${t.train_number}</td>
       <td>${t.train_name}</td>
       <td class="stn">${t.current_station || ''}</td>
@@ -193,7 +200,8 @@ function renderResults(data) {
     if (t.coords) {
       const color = t.is_reference ? '#e63946' : '#0077b6';
       const mk = L.marker(t.coords, { icon: trainIcon(color, null) })
-        .bindTooltip(tooltip(t), { direction: 'top' });
+        .bindTooltip(tooltip(t), { direction: 'top' })
+        .bindPopup(tooltip(t));
       
       if (isVisible) {
         mk.addTo(layers.trains);
@@ -217,8 +225,8 @@ function renderResults(data) {
       const tn = tr.id.replace('r-', '');
       const mk = markers[tn];
       if (mk) {
-        map.flyTo(mk.getLatLng(), 8, { animate: true, duration: 1 });
-        mk.openTooltip();
+        map.flyTo(mk.getLatLng(), 11, { animate: true, duration: 1 });
+        setTimeout(() => mk.openPopup(), 1000);
       }
     });
   }

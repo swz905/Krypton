@@ -185,7 +185,9 @@ input[type="range"] { margin-top: 4px; accent-color: var(--accent); }
   max-width: 120px;
 }
 .results tr:hover td { background: var(--bg); cursor: pointer; }
-.results tr.ref td { font-weight: 600; color: var(--accent); }
+.results tr.ref td { font-weight: 600; color: var(--danger); }
+.results tr.same td:first-child { color: var(--accent); font-weight: 600; border-left: 3px solid var(--accent); padding-left: 8px; }
+.results tr.opp td:first-child { color: #f4a261; font-weight: 600; border-left: 3px solid #f4a261; padding-left: 8px; }
 .results .dist { font-variant-numeric: tabular-nums; color: var(--text-2); }
 
 /* EVENTS */

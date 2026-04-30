@@ -154,6 +154,27 @@ router.post('/api/scan', async (req, res) => {
       
       trainDates[tn] = d.toISOString().slice(0, 10);
 
+      const otherSchedule = db.getTrainSchedule(tn);
+      let isOpposite = false;
+      if (otherSchedule && otherSchedule.length > 0) {
+        const refIdxMap = new Map(refSchedule.map((s, i) => [s.stnCode, i]));
+        const commonPairs = [];
+        for (let oi = 0; oi < otherSchedule.length; oi++) {
+          const ri = refIdxMap.get(otherSchedule[oi].stnCode);
+          if (ri != null) commonPairs.push({ refIdx: ri, otherIdx: oi });
+        }
+        if (commonPairs.length >= 2) {
+          let score = 0;
+          for (let i = 1; i < commonPairs.length; i++) {
+            const rDelta = commonPairs[i].refIdx - commonPairs[i - 1].refIdx;
+            const oDelta = commonPairs[i].otherIdx - commonPairs[i - 1].otherIdx;
+            if ((rDelta > 0 && oDelta > 0) || (rDelta < 0 && oDelta < 0)) score++;
+            else score--;
+          }
+          isOpposite = score < 0;
+        }
+      }
+
       results.push({
         train_number: tn,
         train_name: row._name || 'N/A',
@@ -161,6 +182,7 @@ router.post('/api/scan', async (req, res) => {
         distance_km: Math.round(dist * 10) / 10,
         is_reference: false,
         current_station: row.current_station_name || row.current_station || '',
+        direction: isOpposite ? 'opposite' : 'same'
       });
     }
 

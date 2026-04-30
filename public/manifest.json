@@ -1,0 +1,17 @@
+{
+  "name": "Krypton Train Tracker",
+  "short_name": "Krypton",
+  "description": "Live Train Tracking and Reachability Radar",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f6fa",
+  "theme_color": "#0077b6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
