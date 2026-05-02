@@ -67,11 +67,12 @@ router.post('/api/scan', async (req, res) => {
       return res.json({ message: 'Train near destination.', trains: [], events: [] });
     }
 
-    // 4. From bulk map, find all RUNNING trains that pass through those future stations
+    // 4. From bulk map, find all RUNNING trains that pass through ANY station on our route
+    const allStationCodes = refSchedule.map(s => s.stnCode);
     const snap = await refreshSnapshot();
     if (snap.error) return res.status(502).json({ error: snap.error });
 
-    const candidates = db.getTrainsAtStations(futureStationCodes, String(train_number));
+    const candidates = db.getTrainsAtStations(allStationCodes, String(train_number));
     const runningTrains = new Set(snap.rows.map(r => r._tn));
 
     // Unique running trains where the common station is still AHEAD of them AND within radius
