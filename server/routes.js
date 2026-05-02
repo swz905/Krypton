@@ -108,8 +108,38 @@ router.post('/api/scan', async (req, res) => {
 
       // Filter out: opposite direction AND behind reference train
       if (isOppositeAndBehind(refSchedule, currentIdx, otherSchedule, refCoords, coords)) {
-        console.log(`[scan] ❌ Rejected ${tn} (${row._name || 'Unknown'}) - Moving in opposite direction AND is geographically behind.`);
-        continue;
+        // The bulk snapshot may plot trains at their scheduled locations instead of true live locations.
+        // If an opposite train is extremely late, its true location might still be AHEAD of us.
+        // Let's call the true live API to verify its real physical location.
+        const currentDay = row.current_day ?? row.currentDay ?? 1;
+        const daysOffset = -(currentDay - 1);
+        const d = new Date();
+        d.setUTCHours(d.getUTCHours() + 5);
+        d.setUTCMinutes(d.getUTCMinutes() + 30);
+        d.setUTCDate(d.getUTCDate() + daysOffset);
+        const jDate = d.toISOString().slice(0, 10);
+        
+        console.log(`[scan] ⚠️ ${tn} appears opposite & behind in snapshot. Verifying true live status...`);
+        const liveStatus = await fetchTrainLive(tn, jDate);
+        
+        if (liveStatus && !liveStatus.error && liveStatus.location && liveStatus.location.latitude) {
+          const trueCoords = [liveStatus.location.latitude, liveStatus.location.longitude];
+          const isStillBehind = isOppositeAndBehind(refSchedule, currentIdx, otherSchedule, refCoords, trueCoords);
+          
+          if (isStillBehind) {
+            console.log(`[scan] ❌ Rejected ${tn} - Confirmed passed (true live GPS).`);
+            continue;
+          } else {
+            console.log(`[scan] ✅ Accepted ${tn} - It is LATE and has NOT crossed yet!`);
+            // Update row coords so downstream logic (like distance calculating) uses the true GPS
+            row._lat = trueCoords[0];
+            row._lng = trueCoords[1];
+            // Proceed to accept
+          }
+        } else {
+          console.log(`[scan] ❌ Rejected ${tn} - Live check failed, assuming passed.`);
+          continue;
+        }
       }
 
       console.log(`[scan] ✅ Accepted ${tn} (${row._name || 'Unknown'}) - Distance: ${Math.round(dist)}km`);
