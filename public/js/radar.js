@@ -97,18 +97,23 @@ export function init(io) {
       const mk = markers[t.train_number];
       if (!mk) continue;
 
-      const c = t.coords;
+      const row = document.getElementById('r-' + t.train_number);
+      const isOpposite = (t.direction === 'opposite') || (row && row.classList.contains('opp'));
+
       let head = 0; // Default UP (same direction)
-      if (t.direction === 'opposite') {
+      if (isOpposite) {
         head = 180; // DOWN (opposite direction)
       }
 
+      let color = '#0077b6'; // Default blue
+      if (t.is_reference) color = '#e63946'; // Red for reference
+      else if (isOpposite) color = '#f4a261'; // Orange for opposite
+
       mk.setLatLng(c);
-      mk.setIcon(trainIcon(t.is_reference ? '#e63946' : '#0077b6', head));
+      mk.setIcon(trainIcon(color, head));
       mk.setTooltipContent(tooltip(t)).setPopupContent(tooltip(t));
       prevCoords[t.train_number] = c;
 
-      const row = document.getElementById('r-' + t.train_number);
       if (row) {
         const stnCell = row.querySelector('.stn');
         if (stnCell) stnCell.textContent = t.current_station || '';
@@ -205,9 +210,13 @@ function renderResults(data) {
     </tr>`;
 
     if (t.coords) {
-      const color = t.is_reference ? '#e63946' : '#0077b6';
+      let color = '#0077b6';
+      if (t.is_reference) color = '#e63946';
+      else if (t.direction === 'opposite') color = '#f4a261';
+      
       let head = 0;
       if (t.direction === 'opposite') head = 180;
+      
       const mk = L.marker(t.coords, { icon: trainIcon(color, head) })
         .bindTooltip(tooltip(t), { direction: 'top' })
         .bindPopup(tooltip(t));
