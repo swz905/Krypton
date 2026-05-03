@@ -98,10 +98,10 @@ export function init(io) {
       if (!mk) continue;
 
       const c = t.coords;
-      const prev = prevCoords[t.train_number];
-      let head = null;
-      if (prev && (Math.abs(prev[0]-c[0]) > 1e-5 || Math.abs(prev[1]-c[1]) > 1e-5))
-        head = bearing(prev[0], prev[1], c[0], c[1]);
+      let head = 0; // Default UP (same direction)
+      if (t.direction === 'opposite') {
+        head = 180; // DOWN (opposite direction)
+      }
 
       mk.setLatLng(c);
       mk.setIcon(trainIcon(t.is_reference ? '#e63946' : '#0077b6', head));
@@ -199,7 +199,9 @@ function renderResults(data) {
 
     if (t.coords) {
       const color = t.is_reference ? '#e63946' : '#0077b6';
-      const mk = L.marker(t.coords, { icon: trainIcon(color, null) })
+      let head = 0;
+      if (t.direction === 'opposite') head = 180;
+      const mk = L.marker(t.coords, { icon: trainIcon(color, head) })
         .bindTooltip(tooltip(t), { direction: 'top' })
         .bindPopup(tooltip(t));
       
