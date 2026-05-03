@@ -116,8 +116,8 @@ export function init(io) {
         const distCell = row.querySelector('.dist');
         if (distCell && t.distance_km != null) {
           let arrow = '';
-          if (t.trend === 'increasing') arrow = ' ↗';
-          else if (t.trend === 'decreasing') arrow = ' ↘';
+          if (t.trend === 'increasing') arrow = ' ↑';
+          else if (t.trend === 'decreasing') arrow = ' ↓';
           distCell.textContent = t.distance_km + ' km' + arrow;
           row.dataset.dist = t.distance_km;
         }
@@ -236,8 +236,8 @@ function tooltip(t) {
   let extra = '';
   if (t.distance_km != null && !t.is_reference) {
     let arrow = '';
-    if (t.trend === 'increasing') arrow = ' ↗';
-    else if (t.trend === 'decreasing') arrow = ' ↘';
+    if (t.trend === 'increasing') arrow = ' ↑';
+    else if (t.trend === 'decreasing') arrow = ' ↓';
     extra += `<br>Dist: ${t.distance_km} km${arrow}`;
   }
   if (t.speed != null) extra += ` • Spd: ${t.speed} km/h`;
