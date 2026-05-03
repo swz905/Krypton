@@ -108,38 +108,9 @@ router.post('/api/scan', async (req, res) => {
 
       // Filter out: opposite direction AND behind reference train
       if (isOppositeAndBehind(refSchedule, currentIdx, otherSchedule, refCoords, coords)) {
-        // The bulk snapshot may plot trains at their scheduled locations instead of true live locations.
-        // If an opposite train is extremely late, its true location might still be AHEAD of us.
-        // Let's call the true live API to verify its real physical location.
-        const currentDay = row.current_day ?? row.currentDay ?? 1;
-        const daysOffset = -(currentDay - 1);
-        const d = new Date();
-        d.setUTCHours(d.getUTCHours() + 5);
-        d.setUTCMinutes(d.getUTCMinutes() + 30);
-        d.setUTCDate(d.getUTCDate() + daysOffset);
-        const jDate = d.toISOString().slice(0, 10);
-        
-        console.log(`[scan] ⚠️ ${tn} appears opposite & behind in snapshot. Verifying true live status...`);
-        const liveStatus = await fetchTrainLive(tn, jDate);
-        
-        if (liveStatus && !liveStatus.error && liveStatus.location && liveStatus.location.latitude) {
-          const trueCoords = [liveStatus.location.latitude, liveStatus.location.longitude];
-          const isStillBehind = isOppositeAndBehind(refSchedule, currentIdx, otherSchedule, refCoords, trueCoords);
-          
-          if (isStillBehind) {
-            console.log(`[scan] ❌ Rejected ${tn} - Confirmed passed (true live GPS).`);
-            continue;
-          } else {
-            console.log(`[scan] ✅ Accepted ${tn} - It is LATE and has NOT crossed yet!`);
-            // Update row coords so downstream logic (like distance calculating) uses the true GPS
-            row._lat = trueCoords[0];
-            row._lng = trueCoords[1];
-            // Proceed to accept
-          }
-        } else {
-          console.log(`[scan] ❌ Rejected ${tn} - Live check failed, assuming passed.`);
-          continue;
-        }
+        console.log(`[scan] ⚠️ ${tn} appears opposite & behind in snapshot. Optimistically accepting it; will verify in background loop.`);
+        // We do NOT continue (reject) here. We let it pass to the UI.
+        // The background live tracking loop will verify its true GPS and remove it if it has actually passed.
       }
 
       console.log(`[scan] ✅ Accepted ${tn} (${row._name || 'Unknown'}) - Distance: ${Math.round(dist)}km`);
@@ -415,9 +386,27 @@ function hasPassedStop(schedule, currentCoords, stopCode) {
   return currentIdx > targetIdx + 2;
 }
 
+export function checkHasPassed(mainTrain, otherTrain, refCoords, otherCoords) {
+  const refSchedule = db.getTrainSchedule(mainTrain);
+  const otherSchedule = db.getTrainSchedule(otherTrain);
+  if (!refSchedule.length || !otherSchedule.length) return false;
+
+  let currentIdx = 0;
+  let minDist = Infinity;
+  for (let i = 0; i < refSchedule.length; i++) {
+    const sCoords = db.getStationCoords(refSchedule[i].stnCode);
+    if (sCoords) {
+      const d = haversine(refCoords, sCoords);
+      if (d < minDist) { minDist = d; currentIdx = i; }
+    }
+  }
+
+  return isOppositeAndBehind(refSchedule, currentIdx, otherSchedule, refCoords, otherCoords);
+}
+
 // Returns true if the other train is traveling in the opposite direction
 // AND is geographically behind the reference train (i.e. moving away).
-function isOppositeAndBehind(refSchedule, refCurrentIdx, otherSchedule, refCoords, otherCoords) {
+export function isOppositeAndBehind(refSchedule, refCurrentIdx, otherSchedule, refCoords, otherCoords) {
   // 1. Determine direction by comparing common station order
   const refIdxMap = new Map(refSchedule.map((s, i) => [s.stnCode, i]));
   const commonPairs = []; // { refIdx, otherIdx }

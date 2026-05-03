@@ -137,6 +137,13 @@ export function init(io) {
             if (!map.hasLayer(mk)) mk.addTo(layers.trains);
           }
         }
+        
+        // Dynamically remove if confirmed passed
+        if (t.has_passed) {
+          row.remove();
+          if (map.hasLayer(mk)) mk.removeFrom(map);
+          delete markers[t.train_number];
+        }
       }
     }
 

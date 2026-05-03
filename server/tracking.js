@@ -1,5 +1,7 @@
 // server/tracking.js - Socket.IO live tracking via staggered per-train API calls
 import { fetchTrainLive } from './railradar.js';
+import * as db from './db.js';
+import { checkHasPassed } from './routes.js';
 
 function haversine([lat1, lon1], [lat2, lon2]) {
   const R = 6371, toR = d => d * Math.PI / 180;
@@ -93,6 +95,16 @@ export function setupTracking(io) {
 
               rememberLive(tn, live, coords, dist, speed);
 
+              let hasPassed = false;
+              if (tn !== mainTrain && refCoords) {
+                hasPassed = checkHasPassed(mainTrain, tn, refCoords, coords);
+                if (hasPassed) {
+                  // Stop tracking it in the future
+                  const idx = trains.indexOf(tn);
+                  if (idx > -1) trains.splice(idx, 1);
+                }
+              }
+
               socket.emit('location_update', {
                 trains: [{
                   train_number: tn,
@@ -105,6 +117,7 @@ export function setupTracking(io) {
                   current_station: loc.stationCode || '',
                   status: loc.status || '',
                   delay_min: live.delayMinutes,
+                  has_passed: hasPassed
                 }],
                 updated_at: new Date().toISOString(),
                 closest_km: Number.isFinite(closestKm) ? Math.round(closestKm * 10) / 10 : null,
