@@ -132,6 +132,7 @@ router.post('/api/scan', async (req, res) => {
       current_station: refStnName,
       delay_min: live.delayMinutes,
       status: loc.status,
+      heading: getTrainHeading(refSchedule, loc.stationCode)
     });
 
     // Build per-train journey dates from snapshot's current_day
@@ -184,7 +185,8 @@ router.post('/api/scan', async (req, res) => {
         distance_km: Math.round(dist * 10) / 10,
         is_reference: false,
         current_station: row.current_station_name || row.current_station || '',
-        direction: isOpposite ? 'opposite' : 'same'
+        direction: isOpposite ? 'opposite' : 'same',
+        heading: getTrainHeading(otherSchedule, row.current_station)
       });
     }
 
@@ -384,6 +386,29 @@ function hasPassedStop(schedule, currentCoords, stopCode) {
   // If the closest station is AFTER the target stop, it has likely already passed it.
   // Add a small buffer (e.g., 2 stations) to prevent false positives when trains are between stations.
   return currentIdx > targetIdx + 2;
+}
+
+export function getTrainHeading(schedule, currentStationCode) {
+  if (!schedule || !currentStationCode) return 0;
+  const idx = schedule.findIndex(s => s.stnCode === currentStationCode);
+  if (idx >= 0 && idx < schedule.length - 1) {
+    const s1 = db.getStationCoords(schedule[idx].stnCode);
+    let nextIdx = idx + 1;
+    let s2 = db.getStationCoords(schedule[nextIdx].stnCode);
+    while (!s2 && nextIdx < schedule.length - 1) {
+      nextIdx++;
+      s2 = db.getStationCoords(schedule[nextIdx].stnCode);
+    }
+    if (s1 && s2) {
+      const toR = d => d * Math.PI / 180, toD = r => r * 180 / Math.PI;
+      const p1 = toR(s1[0]), p2 = toR(s2[0]), dl = toR(s2[1] - s1[1]);
+      return Math.round((toD(Math.atan2(
+        Math.sin(dl) * Math.cos(p2),
+        Math.cos(p1) * Math.sin(p2) - Math.sin(p1) * Math.cos(p2) * Math.cos(dl)
+      )) + 360) % 360);
+    }
+  }
+  return 0;
 }
 
 export function checkHasPassed(mainTrain, otherTrain, refCoords, otherCoords) {
