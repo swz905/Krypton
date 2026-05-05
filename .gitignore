@@ -11,3 +11,5 @@ tmp_*
 tempCodeRunner*
 stations_missing_code_report.txt
 instance/
+.next/
+next-env.d.ts

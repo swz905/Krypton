@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #030508;
+  --surface: #0a0e14;
+  --surface-2: #111720;
+  --accent: #00d4ff;
+  --accent-2: #6366f1;
+  --orange: #f59e0b;
+  --green: #10b981;
+  --text: #f1f5f9;
+  --text-dim: #64748b;
+  --border: rgba(255, 255, 255, 0.06);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.3) transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* --- Utilities --- */
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(135deg, #00d4ff, #6366f1, #a855f7);
+}
+
+.text-gradient-warm {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(135deg, #f59e0b, #ef4444);
+}
+
+.glass {
+  background: rgba(10, 14, 20, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+.glow-accent {
+  box-shadow: 0 0 24px rgba(0, 212, 255, 0.25), 0 0 48px rgba(0, 212, 255, 0.1);
+}
+
+.glow-accent:hover {
+  box-shadow: 0 0 32px rgba(0, 212, 255, 0.4), 0 0 64px rgba(0, 212, 255, 0.15);
+}
+
+/* --- Animated Grid Background --- */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* --- Floating Particles --- */
+@keyframes float-up {
+  0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+  animation: float-up linear infinite;
+}
+
+/* --- Scroll Reveal --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Pulse Ring --- */
+@keyframes pulse-ring {
+  0%   { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+.pulse-ring::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+/* --- Train Track Line --- */
+@keyframes dash-scroll {
+  to { stroke-dashoffset: -40; }
+}
+
+/* --- Stat Counter Glow --- */
+@keyframes counter-glow {
+  0%, 100% { text-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+  50%      { text-shadow: 0 0 40px rgba(0, 212, 255, 0.6); }
+}
+
+.stat-number {
+  animation: counter-glow 3s ease-in-out infinite;
+}
+
+/* --- Feature Card Shimmer --- */
+.shimmer-border {
+  position: relative;
+}
+
+.shimmer-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, transparent 40%, rgba(0, 212, 255, 0.3), transparent 60%);
+  background-size: 200% 200%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.shimmer-border:hover::before {
+  opacity: 1;
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
