@@ -1,0 +1,2262 @@
+[
+  {
+    "id": "anaimalai_tiger_reserve",
+    "name": "Anaimalai Tiger Reserve",
+    "lat": 10.41694444,
+    "lng": 77.05666667,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "Wildlife Sanctuary and National Park"
+  },
+  {
+    "id": "mukurthi_national_park",
+    "name": "Mukurthi National Park",
+    "lat": 11.266666666,
+    "lng": 76.475,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Tamil Nadu, India"
+  },
+  {
+    "id": "betla_national_park",
+    "name": "Betla National Park",
+    "lat": 23.8878,
+    "lng": 84.1901,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "Betla National Park is a national park located in the Latehar and Palamu district of Jharkhand, India. Its the only national park in the state."
+  },
+  {
+    "id": "ranthambore_national_park",
+    "name": "Ranthambore National Park",
+    "lat": 26.01733,
+    "lng": 76.50257,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Rajasthan, India"
+  },
+  {
+    "id": "sariska_tiger_reserve",
+    "name": "Sariska Tiger Reserve",
+    "lat": 27.32856,
+    "lng": 76.43319,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "protected area in India"
+  },
+  {
+    "id": "neora_valley_national_park",
+    "name": "Neora Valley National Park",
+    "lat": 27.06,
+    "lng": 88.7,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in the state of West Bengal, India"
+  },
+  {
+    "id": "valmiki_national_park",
+    "name": "Valmiki National Park",
+    "lat": 27.0652,
+    "lng": 84.1793,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "National park and wildlife sanctuary in Bihar, India"
+  },
+  {
+    "id": "gorumara_national_park",
+    "name": "Gorumara National Park",
+    "lat": 26.7,
+    "lng": 88.8,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "Gorumara National Park (Pron: ˌgɔ:rʊˈmɑ:rə; Gorumara Jatio Uddan) is a national park in northern West Bengal, India. Located in the Dooars region of the Himalayan foothills, it is a medium-sized park with grasslands and forests."
+  },
+  {
+    "id": "sariska_tiger_reserve",
+    "name": "Sariska Tiger Reserve",
+    "lat": 27.3175,
+    "lng": 76.43694444,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "protected area in India"
+  },
+  {
+    "id": "sultanpur_national_park",
+    "name": "Sultanpur National Park",
+    "lat": 28.4623,
+    "lng": 76.8899,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "wildlife national park in Haryana, India"
+  },
+  {
+    "id": "hemis_national_park",
+    "name": "Hemis National Park",
+    "lat": 33.983333333,
+    "lng": 77.433333333,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in India"
+  },
+  {
+    "id": "kasu_brahmananda_reddy_national_park",
+    "name": "Kasu Brahmananda Reddy National Park",
+    "lat": 17.42,
+    "lng": 78.41,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park"
+  },
+  {
+    "id": "madhav_national_park",
+    "name": "Madhav National Park",
+    "lat": 25.561666666,
+    "lng": 77.678055555,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Madhya Pradesh, India"
+  },
+  {
+    "id": "singalila_national_park",
+    "name": "Singalila National Park",
+    "lat": 27.11666667,
+    "lng": 88.06666667,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park of India on the Singalila Ridge in Darjeeling district, West Bengal"
+  },
+  {
+    "id": "jim_corbett_national_park",
+    "name": "Jim Corbett National Park",
+    "lat": 29.53333333,
+    "lng": 78.93333333,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in India"
+  },
+  {
+    "id": "dachigam_national_park",
+    "name": "Dachigam National Park",
+    "lat": 34.14,
+    "lng": 75.02,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in India"
+  },
+  {
+    "id": "bhagwan_mahaveer_sanctuary_and_mollem_na",
+    "name": "Bhagwan Mahaveer Sanctuary and Mollem National Park",
+    "lat": 15.37361111,
+    "lng": 74.25861111,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "Bhagwan Mahaveer Sanctuary and Mollem National Park is a 240 square kilometres (93 sq mi) protected area located in the Western Ghats of West India, in Dharbandora taluk, Goa State, along the eastern border with Karnataka. The area is situated near the town of Molem, 57 kilometres (35 mi) east of Panaji, the state capital of Goa."
+  },
+  {
+    "id": "nameri_national_park",
+    "name": "Nameri National Park",
+    "lat": 27.01,
+    "lng": 92.79,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Assam, India"
+  },
+  {
+    "id": "kutch_bustard_sanctuary",
+    "name": "Kutch Bustard Sanctuary",
+    "lat": 23.219,
+    "lng": 68.714,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "Kutch Bustard Sanctuary or Kachchh Great Indian Bustard Sanctuary, also known as Lala–Parjan Sanctuary, is located near Jakhau village in Nalia Taluka, Kutch District, Gujarat, India"
+  },
+  {
+    "id": "madhav_national_park",
+    "name": "Madhav National Park",
+    "lat": 25.46666667,
+    "lng": 77.75,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "Madhav National Park is a national park in Shivpuri District of Gwalior division in northwest Madhya Pradesh, India. It was established in 1956 with 167 km2 (64 sq mi) as Shivpuri National Park."
+  },
+  {
+    "id": "kanger_ghati_national_park",
+    "name": "Kanger Ghati National Park",
+    "lat": 18.832,
+    "lng": 82.011,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national Park near Jagdalpur"
+  },
+  {
+    "id": "vansda_national_park",
+    "name": "Vansda National Park",
+    "lat": 20.7333,
+    "lng": 73.4667,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Gujarat, India"
+  },
+  {
+    "id": "panna_national_park",
+    "name": "Panna National Park",
+    "lat": 24.73044444,
+    "lng": 80.01022222,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in India"
+  },
+  {
+    "id": "marine_national_park_gulf_of_kutch",
+    "name": "Marine National Park, Gulf of Kutch",
+    "lat": 22.4667,
+    "lng": 69.6167,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "National Park situated on the southern shore of the Gulf of Kutch in the Devbhumi Dwarka district of Gujarat state, India."
+  },
+  {
+    "id": "salim_ali_national_park",
+    "name": "Salim Ali National Park",
+    "lat": 34.081,
+    "lng": 74.804,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in India"
+  },
+  {
+    "id": "bannerghatta_national_park",
+    "name": "Bannerghatta National Park",
+    "lat": 12.80083333,
+    "lng": 77.57555556,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "Bannerghatta National Park  is a national park in India, located In Bengaluru and Ramanagara District, Karnataka. It was founded in 1970 and declared as a national park in 1974."
+  },
+  {
+    "id": "dibru_saikhowa_national_park",
+    "name": "Dibru-Saikhowa National Park",
+    "lat": 27.649841,
+    "lng": 95.340294,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Assam, India"
+  },
+  {
+    "id": "orang_national_park",
+    "name": "Orang National Park",
+    "lat": 26.61,
+    "lng": 92.36,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in the state of Assam, India"
+  },
+  {
+    "id": "bhitarkanika_national_park",
+    "name": "Bhitarkanika National Park",
+    "lat": 20.6625,
+    "lng": 86.9341,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Odisha, India"
+  },
+  {
+    "id": "sanjay_national_park",
+    "name": "Sanjay National Park",
+    "lat": 23.968611111,
+    "lng": 81.655277777,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "National park in Madhya Pradesh, India"
+  },
+  {
+    "id": "dudhwa_national_park",
+    "name": "Dudhwa National Park",
+    "lat": 28.470872,
+    "lng": 80.699263,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "Dudhwa National Park is a national park in the Terai belt of marshy grasslands in northern Uttar Pradesh, India. It stretches over an area of 490.3 km2 (189.3 sq mi), with a buffer zone of 190 km2 (73 sq mi)."
+  },
+  {
+    "id": "sri_venkateswara_national_park",
+    "name": "Sri Venkateswara National Park",
+    "lat": 13.7511,
+    "lng": 79.3378,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Andhra Pradesh, India"
+  },
+  {
+    "id": "palani_hills_wildlife_sanctuary_and_nati",
+    "name": "Palani Hills Wildlife Sanctuary and National Park",
+    "lat": 10.24527778,
+    "lng": 77.52388889,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "protected area in India"
+  },
+  {
+    "id": "inderkilla_national_park",
+    "name": "Inderkilla National Park",
+    "lat": 32.23,
+    "lng": 77.41,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Himachal Pradesh, India"
+  },
+  {
+    "id": "pampadum_shola_national_park",
+    "name": "Pampadum Shola National Park",
+    "lat": 10.14388889,
+    "lng": 77.26694444,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Kerala, India"
+  },
+  {
+    "id": "rajaji_national_park",
+    "name": "Rajaji National Park",
+    "lat": 30.08333333,
+    "lng": 78.03333333,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park"
+  },
+  {
+    "id": "satpura_national_park",
+    "name": "Satpura National Park",
+    "lat": 22.495,
+    "lng": 78.231,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park"
+  },
+  {
+    "id": "nawegaon_national_park",
+    "name": "Nawegaon National Park",
+    "lat": 20.93333333,
+    "lng": 80.16666667,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in India"
+  },
+  {
+    "id": "karimpuzha_national_park",
+    "name": "Karimpuzha National Park",
+    "lat": 11.275,
+    "lng": 76.42361111,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "Karimpuzha National Park (Malayalam: കരിമ്പുഴ നാഷണൽ പാർക്ക്‌) is a 230 km² proposed National Park located at 11°16′30″N 76°25′25″E in the Nilgiri Hills area of Kerala and Tamil Nadu, in South India, IUCN category: PRO\n\n\n== History ==\nMadras Forest Act came into force in 1882. The forests of Mannarkkad, New Amarambalam, Silent Valley, Walayar and Chennath Nair Reserve were declared as Reserved Forests during 1883 – 1887."
+  },
+  {
+    "id": "bandhavgarh_national_park",
+    "name": "Bandhavgarh National Park",
+    "lat": 23.69944444,
+    "lng": 80.96194444,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "Bandhavgarh National Park is a national park of India, located in the Umaria district of Madhya Pradesh. It spreads over an area of 105 km2 (41 sq mi) and was declared a national park in 1968."
+  },
+  {
+    "id": "dehing_patkai_national_park",
+    "name": "Dehing Patkai National Park",
+    "lat": 27.331,
+    "lng": 95.526,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Assam, India"
+  },
+  {
+    "id": "ntangki_national_park",
+    "name": "Ntangki National Park",
+    "lat": 25.56,
+    "lng": 93.45,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in India"
+  },
+  {
+    "id": "mrugavani_national_park",
+    "name": "Mrugavani National Park",
+    "lat": 17.35777778,
+    "lng": 78.34111111,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park of India"
+  },
+  {
+    "id": "clouded_leopard_national_park",
+    "name": "Clouded Leopard National Park",
+    "lat": 23.66822222,
+    "lng": 91.32254444,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Tripura, India"
+  },
+  {
+    "id": "gir_forest",
+    "name": "Gir Forest",
+    "lat": 21.13556,
+    "lng": 70.79667,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "forest, national park, and wildlife sanctuary in Gujarat, India"
+  },
+  {
+    "id": "kaziranga_national_park",
+    "name": "Kaziranga National Park",
+    "lat": 26.666666666,
+    "lng": 93.35,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in the state of Assam, India"
+  },
+  {
+    "id": "silent_valley_national_park",
+    "name": "Silent Valley National Park",
+    "lat": 11.133333333,
+    "lng": 76.466666666,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Kerala, India"
+  },
+  {
+    "id": "shirui_national_park",
+    "name": "Shirui National Park",
+    "lat": 24.23083333,
+    "lng": 94.23083333,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Manipur, India"
+  },
+  {
+    "id": "guindy_national_park",
+    "name": "Guindy National Park",
+    "lat": 13.00259,
+    "lng": 80.23079,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "Guindy National Park is a protected area, located in Chennai, India. Spread across 2.70 km2 (1.04 sq mi), it is one of the smallest National Parks in India and one of the few national parks situated inside a metropolitan area."
+  },
+  {
+    "id": "hazaribagh_wildlife_sanctuary",
+    "name": "Hazaribagh Wildlife Sanctuary",
+    "lat": 24.139,
+    "lng": 85.366,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "Wildlife sanctuary in Kharkhand, India"
+  },
+  {
+    "id": "chandoli_national_park",
+    "name": "Chandoli National Park",
+    "lat": 17.19166667,
+    "lng": 73.775,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "Chandoli National Park is a national park   established in Sangli district in May 2004. Earlier it was a Wildlife Sanctuary declared in 1985."
+  },
+  {
+    "id": "rajbari_national_park",
+    "name": "Rajbari National Park",
+    "lat": 23.28,
+    "lng": 91.4,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in the Trishna Wildlife Sanctuary, Tripura, India"
+  },
+  {
+    "id": "sanjay_gandhi_national_park",
+    "name": "Sanjay Gandhi National Park",
+    "lat": 19.25,
+    "lng": 72.9167,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Mumbai, India"
+  },
+  {
+    "id": "rajiv_gandhi_national_park",
+    "name": "Rajiv Gandhi National Park",
+    "lat": 14.726944444,
+    "lng": 78.560833333,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Andhra Pradesh, India"
+  },
+  {
+    "id": "mahavir_harina_vanasthali_national_park",
+    "name": "Mahavir Harina Vanasthali National Park",
+    "lat": 17.34,
+    "lng": 78.58583333,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Hyderabad, India"
+  },
+  {
+    "id": "mathikettan_shola_national_park",
+    "name": "Mathikettan Shola National Park",
+    "lat": 10.03333333,
+    "lng": 77.13333333,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "village in Idukki District, Kerala, India"
+  },
+  {
+    "id": "kevladev_national_park",
+    "name": "Kevladev National Park",
+    "lat": 27.166667,
+    "lng": 77.516667,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "National park and bird sanctuary in Rajasthan, India"
+  },
+  {
+    "id": "blackbuck_national_park",
+    "name": "Blackbuck National Park",
+    "lat": 22.03333333,
+    "lng": 72,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in India"
+  },
+  {
+    "id": "manas_national_park",
+    "name": "Manas National Park",
+    "lat": 26.716666666,
+    "lng": 90.933333333,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Assam, India"
+  },
+  {
+    "id": "gulf_of_mannar_marine_national_park",
+    "name": "Gulf of Mannar Marine National Park",
+    "lat": 9.1375,
+    "lng": 79.4725,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "protected area of Indian coastline"
+  },
+  {
+    "id": "hazaribagh_wildlife_sanctuary",
+    "name": "Hazaribagh Wildlife Sanctuary",
+    "lat": 24.1474,
+    "lng": 85.36,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "Wildlife sanctuary in Kharkhand, India"
+  },
+  {
+    "id": "van_vihar_national_park",
+    "name": "Van Vihar National Park",
+    "lat": 23.22948,
+    "lng": 77.36977,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in Madhya Pradesh, India"
+  },
+  {
+    "id": "jaldapara_national_park",
+    "name": "Jaldapara National Park",
+    "lat": 26.628611,
+    "lng": 89.3775,
+    "type": "wildlife",
+    "icon": "🦁",
+    "radius_km": 15,
+    "story": "national park in West Bengal, India"
+  },
+  {
+    "id": "pushpagiri_wildlife_sanctuary",
+    "name": "Pushpagiri Wildlife Sanctuary",
+    "lat": 12.58333333,
+    "lng": 75.66666667,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Karnataka, India"
+  },
+  {
+    "id": "gautam_budha_wildlife_sanctuary",
+    "name": "Gautam Budha Wildlife Sanctuary",
+    "lat": 24.54,
+    "lng": 85.56,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Gautam Budha Wildlife Sanctuary (also spelled Gautam Buddha) is a wildlife sanctuary located in Gaya district of Bihar state and Koderma district of Jharkhand state in east-central India.\nThe refuge was established in 1976, and covers an area of 259 km2."
+  },
+  {
+    "id": "narendrapur_wildlife_sanctuary",
+    "name": "Narendrapur Wildlife Sanctuary",
+    "lat": 22.4295,
+    "lng": 88.4007,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in India"
+  },
+  {
+    "id": "balukhand_konark_wildlife_sanctuary",
+    "name": "Balukhand-Konark Wildlife Sanctuary",
+    "lat": 19.8619,
+    "lng": 86.0477,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "The Balukhand-Konark Wildlife Sanctuary is a wildlife sanctuary located in the Indian state of Odisha. The sanctuary has an area of 87 km2, and is located along the Bay of Bengal coast, between the towns of Puri and Konark."
+  },
+  {
+    "id": "udaypur_wildlife_sanctuary",
+    "name": "Udaypur Wildlife Sanctuary",
+    "lat": 26.815789,
+    "lng": 84.4324626,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in India"
+  },
+  {
+    "id": "karlapat_wildlife_sanctuary",
+    "name": "Karlapat Wildlife Sanctuary",
+    "lat": 19.686735,
+    "lng": 83.062584,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Odisha, India"
+  },
+  {
+    "id": "kondakameru_wildlife_sanctuary",
+    "name": "Kondakameru Wildlife Sanctuary",
+    "lat": 18.366719,
+    "lng": 81.982249,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in India"
+  },
+  {
+    "id": "barda_wildlife_sanctuary",
+    "name": "Barda Wildlife Sanctuary",
+    "lat": 21.851,
+    "lng": 69.699,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Barda Wildlife Sanctuary is located in Gujarat, India. It is situated approximately 31 kilometres (19 mi) from Ranavav, 49 kilometres (30 mi) from Porbandar and 100 kilometres (62 mi) west of Gir Forest National Park."
+  },
+  {
+    "id": "sharavathi_ltm_wildlife_sanctuary",
+    "name": "Sharavathi LTM Wildlife Sanctuary",
+    "lat": 13.9,
+    "lng": 74.633333333,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "jore_pokhri_wildlife_sanctuary",
+    "name": "Jore Pokhri Wildlife Sanctuary",
+    "lat": 26.99118,
+    "lng": 88.1573,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "nandhaur_wildlife_sanctuary",
+    "name": "Nandhaur Wildlife Sanctuary",
+    "lat": 29.033333333,
+    "lng": 79.8,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Uttarakhand, India"
+  },
+  {
+    "id": "shendurney_wildlife_reserve",
+    "name": "Shendurney Wildlife Reserve",
+    "lat": 8.81061,
+    "lng": 77.13658,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "raiganj_wildlife_sanctuary",
+    "name": "Raiganj Wildlife Sanctuary",
+    "lat": 25.637,
+    "lng": 88.121,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in India"
+  },
+  {
+    "id": "baisipali_wildlife_sanctuary",
+    "name": "Baisipali Wildlife Sanctuary",
+    "lat": 20.45,
+    "lng": 84.75,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "gumti_wildlife_sanctuary",
+    "name": "Gumti Wildlife Sanctuary",
+    "lat": 23.664444444,
+    "lng": 91.311666666,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Gumti Wildlife Sanctuary is a wildlife sanctuary in southern Tripura, India. \n\n\n== Description ==\nGumti Wildlife Sanctuary encompasses an area of 389.54 km2 (150.40 sq mi) and was declared a protected area in 1988."
+  },
+  {
+    "id": "ghatigaon_sanctuary",
+    "name": "Ghatigaon Sanctuary",
+    "lat": 26.05,
+    "lng": 77.93333333,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife Sanctuary in Madhya Pradesh, India"
+  },
+  {
+    "id": "kanyakumari_wildlife_sanctuary",
+    "name": "Kanyakumari Wildlife Sanctuary",
+    "lat": 8.3543,
+    "lng": 77.34334,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "one of the Protected areas of Tamil Nadu"
+  },
+  {
+    "id": "cotigao_wildlife_sanctuary",
+    "name": "Cotigao Wildlife Sanctuary",
+    "lat": 14.976,
+    "lng": 74.206,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Wildlife Sanctuary"
+  },
+  {
+    "id": "maenam_wildlife_sanctuary",
+    "name": "Maenam Wildlife Sanctuary",
+    "lat": 27.338032,
+    "lng": 88.385591,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Wildlife reserve in Sikkim, India"
+  },
+  {
+    "id": "cauvery_north_wildlife_sanctuary",
+    "name": "Cauvery North Wildlife Sanctuary",
+    "lat": 12.41,
+    "lng": 77.87,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "The Cauvery North Wildlife Sanctuary is a protected area located in the Dharmapuri and Krishnagiri districts of Tamil Nadu, India. Sanctuary is named as it is located above the north of Cauvery river in Tamil Nadu state and south of river connects to the Cauvery Wildlife Sanctuary of Karnataka state."
+  },
+  {
+    "id": "chandaka_elephant_sanctuary",
+    "name": "Chandaka Elephant Sanctuary",
+    "lat": 20.36666667,
+    "lng": 85.76666667,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife reserve"
+  },
+  {
+    "id": "hail_haor_wildlife_sanctuary",
+    "name": "Hail Haor Wildlife Sanctuary",
+    "lat": 24.366666666,
+    "lng": 91.683333333,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Bangladesh"
+  },
+  {
+    "id": "ghodazari_wildlife_sanctuary",
+    "name": "Ghodazari Wildlife Sanctuary",
+    "lat": 20.5347429,
+    "lng": 79.6332774,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "nargu_wildlife_sanctuary",
+    "name": "Nargu Wildlife Sanctuary",
+    "lat": 32.0139,
+    "lng": 76.8572,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "sanctuary located in Mandi District of Himachal Pradesh, India"
+  },
+  {
+    "id": "chail_sanctuary",
+    "name": "Chail Sanctuary",
+    "lat": 30.9599,
+    "lng": 77.1978,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Chail Sanctuary is located at Chail, a hill station which is home to sambar, goral and cheer pheasants at Blossom and Jhaja. Barking deer and kalij pheasants are seen during dusk and dawn."
+  },
+  {
+    "id": "neyyar_wildlife_reserve",
+    "name": "Neyyar Wildlife Reserve",
+    "lat": 8.48875,
+    "lng": 77.24725,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "tal_chhapar_sanctuary",
+    "name": "Tal Chhapar Sanctuary",
+    "lat": 27.7981,
+    "lng": 74.4349,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "protected area in Rajasthan, India"
+  },
+  {
+    "id": "kurinjimala_sanctuary",
+    "name": "Kurinjimala Sanctuary",
+    "lat": 10.23,
+    "lng": 77.27,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife habitat"
+  },
+  {
+    "id": "kaimur_wildlife_sanctuary",
+    "name": "Kaimur Wildlife Sanctuary",
+    "lat": 25.05,
+    "lng": 83.5,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Kaimur Wildlife Sanctuary is situated in Kaimur District and Rohtas District of Bihar. It is the largest sanctuary in the state and extended in area of 1,504.96 km2 (581.07 sq mi) in plateaued landscape of Kaimur Range."
+  },
+  {
+    "id": "senchal_wildlife_sanctuary",
+    "name": "Senchal Wildlife Sanctuary",
+    "lat": 26.9938,
+    "lng": 88.2652,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Wildlife sanctuary in West Bengal, India"
+  },
+  {
+    "id": "pant_wildlife_sanctuary",
+    "name": "Pant Wildlife Sanctuary",
+    "lat": 24.9928,
+    "lng": 85.4233,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Bihar, India"
+  },
+  {
+    "id": "gaga_wildlife_sanctuary",
+    "name": "Gaga Wildlife Sanctuary",
+    "lat": 22.10775,
+    "lng": 69.16923,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "kuldiha_wildlife_sanctuary",
+    "name": "Kuldiha Wildlife Sanctuary",
+    "lat": 21.333333333,
+    "lng": 86.5,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Wildlife Sanctuary in Odisha , India adjoining Simlipal National Park"
+  },
+  {
+    "id": "bhadra_wildlife_sanctuary",
+    "name": "Bhadra Wildlife Sanctuary",
+    "lat": 13.695477777,
+    "lng": 75.636813888,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Bhadra Wildlife Sanctuary is a wildlife sanctuary and tiger reserve in the state of Karnataka, India. It hosts a wide range of flora and fauna."
+  },
+  {
+    "id": "adina_deer_park",
+    "name": "Adina Deer Park",
+    "lat": 25.1405,
+    "lng": 88.1727,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Adina Deer Park is located in Malda district of West Bengal and lies 21 kilometres from the city of Malda. The park is an important breeding centre for cheetal or spotted deer in the state and sometimes they overflow in number."
+  },
+  {
+    "id": "gajner_wildlife_sanctuary",
+    "name": "Gajner Wildlife Sanctuary",
+    "lat": 27.952722222,
+    "lng": 73.056972222,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Wildlife sanctuary on Rajasthan"
+  },
+  {
+    "id": "mahananda_wildlife_sanctuary",
+    "name": "Mahananda Wildlife Sanctuary",
+    "lat": 26.87361,
+    "lng": 88.43889,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Wildlife Sanctuary between the Teesta and Mahananda rivers in West Bengal, India"
+  },
+  {
+    "id": "tungareshwar_wildlife_sanctuary",
+    "name": "Tungareshwar Wildlife Sanctuary",
+    "lat": 19.3879,
+    "lng": 72.9358,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "rowa_wildlife_sanctuary",
+    "name": "Rowa Wildlife Sanctuary",
+    "lat": 24.29,
+    "lng": 92.17,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Tripura, India"
+  },
+  {
+    "id": "phansad_wildlife_sanctuary",
+    "name": "Phansad Wildlife Sanctuary",
+    "lat": 18.344111111,
+    "lng": 73.059083333,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in India"
+  },
+  {
+    "id": "ratapani_tiger_reserve",
+    "name": "Ratapani Tiger Reserve",
+    "lat": 22.918,
+    "lng": 77.722,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "tiger reserve in India"
+  },
+  {
+    "id": "amchang_wildlife_sanctuary",
+    "name": "Amchang Wildlife Sanctuary",
+    "lat": 26.18422,
+    "lng": 91.86213,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "The Amchang Wildlife Sanctuary is a wildlife sanctuary located on the eastern fringe of Guwahati, Assam, India. The name Amchang is originated from the name of Arleng village named Amcheng (now Amsing) located in the heart of the wildlife sanctuary."
+  },
+  {
+    "id": "nongkhyllem_wildlife_sanctuary",
+    "name": "Nongkhyllem Wildlife Sanctuary",
+    "lat": 25.927380555,
+    "lng": 91.746522222,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Meghalaya, India"
+  },
+  {
+    "id": "bhimbandh_wildlife_sanctuary",
+    "name": "Bhimbandh Wildlife Sanctuary",
+    "lat": 25.23,
+    "lng": 86.28,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Bhimbandh Wildlife Sanctuary is a wildlife sanctuary in Bihar in the south-west of Munger District.\n\n\n== Etymology ==\nDuring the Mahabharata period, when the Pandavas were on their exile, they had also come to this forest during that time."
+  },
+  {
+    "id": "thol_wildlife_sanctuary",
+    "name": "Thol Wildlife Sanctuary",
+    "lat": 23.14,
+    "lng": 72.4,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "ghatigaon_sanctuary",
+    "name": "Ghatigaon Sanctuary",
+    "lat": 26.166,
+    "lng": 77.927,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife Sanctuary in Madhya Pradesh, India"
+  },
+  {
+    "id": "bibhutibhushan_wildlife_sanctuary",
+    "name": "Bibhutibhushan Wildlife Sanctuary",
+    "lat": 23.186178,
+    "lng": 88.762087,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Bibhutibhusan Wildlife Sanctuary (formerly Parmadan Forest) is an animal sanctuary in North 24 Parganas district in the Indian state of West Bengal. The forest is located about 100 km from Kolkata and 25 km from Bongaon."
+  },
+  {
+    "id": "umred_karhandla_wildlife_sanctuary",
+    "name": "Umred Karhandla Wildlife Sanctuary",
+    "lat": 20.83555556,
+    "lng": 79.51111111,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Maharashtra, India"
+  },
+  {
+    "id": "dalma_wildlife_sanctuary",
+    "name": "Dalma Wildlife Sanctuary",
+    "lat": 22.90416667,
+    "lng": 86.21638889,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in India"
+  },
+  {
+    "id": "trishna_wildlife_sanctuary",
+    "name": "Trishna Wildlife Sanctuary",
+    "lat": 23.421666666,
+    "lng": 91.313055555,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Wildlife sanctuary in Tripura, India"
+  },
+  {
+    "id": "nauradehi_wildlife_sanctuary",
+    "name": "Nauradehi Wildlife Sanctuary",
+    "lat": 23.17814167,
+    "lng": 79.20188611,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Madhya Pradesh, India"
+  },
+  {
+    "id": "sagareshwar_wildlife_sanctuary",
+    "name": "Sagareshwar Wildlife Sanctuary",
+    "lat": 17.153213,
+    "lng": 74.37673,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in India"
+  },
+  {
+    "id": "karimpuzha_wildlife_sanctuary",
+    "name": "Karimpuzha Wildlife Sanctuary",
+    "lat": 11.3875,
+    "lng": 76.376944444,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Wildlife sanctuary near Nilambur, Malappuram district"
+  },
+  {
+    "id": "peechi_vazhani_wildlife_sanctuary",
+    "name": "Peechi-Vazhani Wildlife Sanctuary",
+    "lat": 10.481,
+    "lng": 76.446,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary headquartered in Peechi, Thrissur District of Kerala, India"
+  },
+  {
+    "id": "vallanadu_wildlife_sanctuary",
+    "name": "Vallanadu Wildlife Sanctuary",
+    "lat": 8.7011,
+    "lng": 77.8876,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "east_karbi_anglong_wildlife_sanctuary",
+    "name": "East Karbi-Anglong Wildlife Sanctuary",
+    "lat": 25.92,
+    "lng": 93.3829,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Wildlife sanctuary in Assam, India"
+  },
+  {
+    "id": "d_ering_memorial_wildlife_sanctuary",
+    "name": "D'Ering Memorial Wildlife Sanctuary",
+    "lat": 27.937777777,
+    "lng": 95.445833333,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "D'Ering Memorial Wildlife Sanctuary is a protected area in Arunachal Pradesh, India, with an area of 190 km2 (73 sq mi). It was established in 1978."
+  },
+  {
+    "id": "narayan_sarovar_sanctuary",
+    "name": "Narayan Sarovar Sanctuary",
+    "lat": 23.61666667,
+    "lng": 68.68333333,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "protected area in Gujarat, India"
+  },
+  {
+    "id": "koderma_wildlife_sanctuary",
+    "name": "Koderma Wildlife Sanctuary",
+    "lat": 24.5373,
+    "lng": 85.5939,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "debrigarh_wildlife_sanctuary",
+    "name": "Debrigarh Wildlife Sanctuary",
+    "lat": 21.557097,
+    "lng": 83.646108,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "The Debrigarh wildlife sanctuary is located in the Bargarh district in the Indian state of Odisha, covering a total area of 346.91 km2. It is situated near the city of Sambalpur's Hirakud Dam."
+  },
+  {
+    "id": "indian_wild_ass_sanctuary",
+    "name": "Indian Wild Ass Sanctuary",
+    "lat": 23.35,
+    "lng": 71.63333333,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Indian wildlife sanctuary"
+  },
+  {
+    "id": "shendurney_wildlife_sanctuary",
+    "name": "Shendurney Wildlife Sanctuary",
+    "lat": 8.812,
+    "lng": 77.15,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in India"
+  },
+  {
+    "id": "ramnabagan_wildlife_sanctuary",
+    "name": "Ramnabagan Wildlife Sanctuary",
+    "lat": 23.253,
+    "lng": 87.851,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in West Bengal, India"
+  },
+  {
+    "id": "balaram_ambaji_widelife_sanctuary",
+    "name": "Balaram Ambaji Widelife Sanctuary",
+    "lat": 24.356118321,
+    "lng": 72.642752927,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Banaskantha, Gujarat, India"
+  },
+  {
+    "id": "shoolpaneshwar_wildlife_sanctuary",
+    "name": "Shoolpaneshwar Wildlife Sanctuary",
+    "lat": 21.7606223,
+    "lng": 73.7948516,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in India"
+  },
+  {
+    "id": "ratan_mahal_wildlife_sanctuary",
+    "name": "Ratan Mahal Wildlife Sanctuary",
+    "lat": 22.575,
+    "lng": 74.110347222,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "protected area in Gujarat, India"
+  },
+  {
+    "id": "fambong_lho_wildlife_sanctuary",
+    "name": "Fambong Lho Wildlife Sanctuary",
+    "lat": 27.3113,
+    "lng": 88.53366667,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Sikkim, India"
+  },
+  {
+    "id": "kitam_bird_sanctuary",
+    "name": "Kitam bird sanctuary",
+    "lat": 27.1,
+    "lng": 88.333333333,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "bird sanctuary of India"
+  },
+  {
+    "id": "behali_reserved_forest",
+    "name": "Behali Reserved Forest",
+    "lat": 26.908888888,
+    "lng": 93.308055555,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "natural area under government of India"
+  },
+  {
+    "id": "nalbana_bird_sanctuary",
+    "name": "Nalbana Bird Sanctuary",
+    "lat": 19.69416667,
+    "lng": 85.30666667,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "bird sanctuary, core area of the Ramsar designated wetlands of Chilika Lake"
+  },
+  {
+    "id": "thimlapura_wildlife_sanctuary",
+    "name": "Thimlapura Wildlife Sanctuary",
+    "lat": 13.3787,
+    "lng": 77.1842,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Tumkur district"
+  },
+  {
+    "id": "kalakkad_mundanthurai_tiger_reserve",
+    "name": "Kalakkad Mundanthurai Tiger Reserve",
+    "lat": 8.68333333,
+    "lng": 77.31666667,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Kalakkad Mundanthurai Tiger Reserve (KMTR) located in the South Western Ghats montane rain forests in Tirunelveli district and Kanyakumari district in the South Indian state of Tamil Nadu, is the second-largest protected area in Tamil Nadu. It is part of the Agasthyamala Biosphere Reserve."
+  },
+  {
+    "id": "pakhui_tiger_reserve",
+    "name": "Pakhui Tiger Reserve",
+    "lat": 27.08333333,
+    "lng": 92.85833333,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "tiger reserve in Arunachal Pradesh, India"
+  },
+  {
+    "id": "pakkamalai",
+    "name": "Pakkamalai",
+    "lat": 12.181883,
+    "lng": 79.289707,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "mountain and forest reserve in Tamil Nadu, India"
+  },
+  {
+    "id": "lakh_bahosi_sanctuary",
+    "name": "Lakh Bahosi Sanctuary",
+    "lat": 26.911,
+    "lng": 79.641,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "bird sanctuary in kannauj, uttarpradesh"
+  },
+  {
+    "id": "parvati_arga_bird_sanctuary",
+    "name": "Parvati Arga Bird Sanctuary",
+    "lat": 26.933333333,
+    "lng": 82.15,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "nature reserve in Uttar Pradesh, India"
+  },
+  {
+    "id": "nagi_bird_sanctuary",
+    "name": "Nagi Bird Sanctuary",
+    "lat": 24.8175,
+    "lng": 86.4,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Indian nature site"
+  },
+  {
+    "id": "amba_barwa_wildlife_sanctuary",
+    "name": "Amba Barwa Wildlife Sanctuary",
+    "lat": 21.222305555,
+    "lng": 76.648666666,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "The Amba Barwa  Wildlife Sanctuary is situated in Satpura Range of Buldhana District of Maharashtra. It is a part of the Melghat Tiger Reserve."
+  },
+  {
+    "id": "tinkupani_reserve_forest",
+    "name": "Tinkupani Reserve Forest",
+    "lat": 27.52444444,
+    "lng": 95.32555556,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Reserve Forest of India"
+  },
+  {
+    "id": "dhauladhar_wildlife_sanctuary",
+    "name": "Dhauladhar Wildlife Sanctuary",
+    "lat": 32.2852,
+    "lng": 76.9132,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Dhauladhar Wildlife Sanctuary is a protected area located in the Kangra district of Himachal Pradesh, India. Established in 1994, it spans approximately 944 km² and lies at elevations ranging from 1,600 to 4,400 m above sea level."
+  },
+  {
+    "id": "karnala_bird_sanctuary",
+    "name": "Karnala Bird Sanctuary",
+    "lat": 18.90861111,
+    "lng": 73.1025,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Maharashtra, India"
+  },
+  {
+    "id": "nellai_wildlife_sanctuary",
+    "name": "Nellai Wildlife Sanctuary",
+    "lat": 9.1,
+    "lng": 77.266666666,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "is a great tourist attraction"
+  },
+  {
+    "id": "gudavi_bird_sanctuary",
+    "name": "Gudavi Bird Sanctuary",
+    "lat": 14.439722222,
+    "lng": 75.0125,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "bird sanctuary in Karnataka, India"
+  },
+  {
+    "id": "kakoijana_reserved_forest",
+    "name": "Kakoijana Reserved Forest",
+    "lat": 26.55,
+    "lng": 91.0075,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "bankapur_peacock_sanctuary",
+    "name": "Bankapur Peacock Sanctuary",
+    "lat": 14.92,
+    "lng": 75.262,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Wildlife sactuary in Karnataka, India"
+  },
+  {
+    "id": "chincholi_wildlife_sanctuary",
+    "name": "Chincholi Wildlife Sanctuary",
+    "lat": 17.5,
+    "lng": 77.5,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Chincholi Wildlife Sanctuary, located in the Chincholi taluka of kalaburagi district of Karnataka, is the first drylands wildlife sanctuary in South India. Spanning an area of 134.88 square kilometers, it is known for its rich biodiversity and unique ecosystem."
+  },
+  {
+    "id": "mandagadde_bird_sanctuary",
+    "name": "Mandagadde Bird Sanctuary",
+    "lat": 13.7406,
+    "lng": 75.4603,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "village in Karnataka, India"
+  },
+  {
+    "id": "pulie_badze_wildlife_sanctuary",
+    "name": "Pulie Badze Wildlife Sanctuary",
+    "lat": 25.6107,
+    "lng": 94.0623,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Nagaland, India"
+  },
+  {
+    "id": "amsoi_reserve_forest",
+    "name": "Amsoi Reserve Forest",
+    "lat": 26.21666667,
+    "lng": 92.7,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Reserve Forest of India"
+  },
+  {
+    "id": "shankarghola_forest_reserve",
+    "name": "Shankarghola Forest Reserve",
+    "lat": 26.3077185,
+    "lng": 90.5318651,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "reserve forest"
+  },
+  {
+    "id": "khalingduar_reserve_forest",
+    "name": "Khalingduar Reserve Forest",
+    "lat": 26.26666667,
+    "lng": 92.71666667,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Reserve Forest of India"
+  },
+  {
+    "id": "semarsot_wildlife_sanctuary",
+    "name": "Semarsot Wildlife Sanctuary",
+    "lat": 23.548,
+    "lng": 83.5283,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "ashramam_biodiversity_heritage_site",
+    "name": "Ashramam Biodiversity Heritage Site",
+    "lat": 8.895555555,
+    "lng": 76.586388888,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Ashramam Biodiversity Heritage Site is the first Biodiversity Heritage Site in the Kerala state that came up at Asramam in Kollam city. This heritage site encompasses more than 50 hectares, including the Government Guest House complex, the mangrove area, and the creek of Ashtamudi Lake."
+  },
+  {
+    "id": "garbhanga_reserve_forest",
+    "name": "Garbhanga Reserve Forest",
+    "lat": 26.050775605,
+    "lng": 91.686896833,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Reserve Forest of India"
+  },
+  {
+    "id": "rangapahar_wildlife_sanctuary",
+    "name": "Rangapahar Wildlife Sanctuary",
+    "lat": 25.85623,
+    "lng": 93.7194,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary near Dimapur in Nagaland, India"
+  },
+  {
+    "id": "s_l_w_ra_reserved_forest",
+    "name": "Sālīwāra Reserved Forest",
+    "lat": 22.44405,
+    "lng": 80.0806,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "forest reserve in India"
+  },
+  {
+    "id": "painganga_wildlife_sanctuary",
+    "name": "Painganga Wildlife Sanctuary",
+    "lat": 19.586111111,
+    "lng": 78.041666666,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Maharashtra, India"
+  },
+  {
+    "id": "abhaypur_reserve_forest",
+    "name": "Abhaypur Reserve Forest",
+    "lat": 27.14333333,
+    "lng": 95.37305556,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Reserve Forest of India"
+  },
+  {
+    "id": "nandur_madhmeshwar_bird_sanctuary",
+    "name": "Nandur Madhmeshwar Bird Sanctuary",
+    "lat": 20.0079,
+    "lng": 74.0073,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Nandur Madhmeshwar Bird Sanctuary is located at Niphad Tehsil of Nashik District, known as the Bharatpur of Maharashtra.\nIt is designated as Ramsar site and it's a Maharashtra's first Ramsar site."
+  },
+  {
+    "id": "poba_rainforest",
+    "name": "Poba Rainforest",
+    "lat": 27.836388888,
+    "lng": 95.295833333,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "reserved forest of Assam, India"
+  },
+  {
+    "id": "padumoni_reserve_forest",
+    "name": "Padumoni Reserve Forest",
+    "lat": 26.95972222,
+    "lng": 94.95777778,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Reserve Forest of India"
+  },
+  {
+    "id": "pulicat_lake_bird_sanctuary",
+    "name": "Pulicat Lake Bird Sanctuary",
+    "lat": 13.56666667,
+    "lng": 80.2,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "sanctuary for birds in India"
+  },
+  {
+    "id": "kamrunag_lake",
+    "name": "Kamrunag Lake",
+    "lat": 31.473055555,
+    "lng": 77.05,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Kamrunag Lake is located in the Mandi district of Himachal Pradesh, India. It is situated at 3,334 m (10,938 ft) above sea level in D.P.F. Kamrunag which is between the Mandi State and the Suket State ."
+  },
+  {
+    "id": "udayamarthandapuram_bird_sanctuary",
+    "name": "Udayamarthandapuram Bird Sanctuary",
+    "lat": 10.4505,
+    "lng": 79.5545,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "yangoupokpi_lokchao_wildlife_sanctuary",
+    "name": "Yangoupokpi-Lokchao Wildlife Sanctuary",
+    "lat": 24.32,
+    "lng": 94.23,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Wildlife sanctuary in Manipur"
+  },
+  {
+    "id": "tipong_reserve_forest_lekhapani_reserve_",
+    "name": "Tipong Reserve Forest & Lekhapani Reserve Forest",
+    "lat": 27.53888889,
+    "lng": 95.32444444,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Reserve Forest of India"
+  },
+  {
+    "id": "itanagar_wildlife_sanctuary",
+    "name": "Itanagar Wildlife Sanctuary",
+    "lat": 27.068472222,
+    "lng": 93.581361111,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "The Itanagar wildlife sanctuary was established in 1968 with the aim to conserve the biodiversity around the Itanagar sanctuary. The reserve forest around Itanagar became part of the sanctuary."
+  },
+  {
+    "id": "biligiri_rangaswamy_temple_wildlife_sanc",
+    "name": "Biligiri Rangaswamy Temple Wildlife Sanctuary",
+    "lat": 11.9725,
+    "lng": 77.1515,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Karnataka, India"
+  },
+  {
+    "id": "arabithittu_wildlife_sanctuary",
+    "name": "Arabithittu Wildlife Sanctuary",
+    "lat": 12.323611111,
+    "lng": 76.405555555,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Arabithittu Wildlife Sanctuary is located in the Mysore district of Karnataka, India. It was declared as a wildlife sanctuary on 30 April 1985."
+  },
+  {
+    "id": "wan_wildlife_sanctuary",
+    "name": "Wan Wildlife Sanctuary",
+    "lat": 21.2441,
+    "lng": 76.8509,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Amravati district, Maharashtra, India"
+  },
+  {
+    "id": "karaivetti_bird_sanctuary",
+    "name": "Karaivetti Bird Sanctuary",
+    "lat": 10.970277777,
+    "lng": 79.041388888,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "bird sanctuary in the Ariyalur District of Tamil Nadu, India"
+  },
+  {
+    "id": "bhorjan_reserve_forest",
+    "name": "Bhorjan Reserve Forest",
+    "lat": 27.52222222,
+    "lng": 95.32083333,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Reserve Forest of India"
+  },
+  {
+    "id": "cauvery_south_wildlife_sanctuary",
+    "name": "Cauvery south Wildlife Sanctuary",
+    "lat": 12.344166666,
+    "lng": 78.017222222,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "protected area in India"
+  },
+  {
+    "id": "victoria_park",
+    "name": "Victoria Park",
+    "lat": 21.7461058,
+    "lng": 72.1293379,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Reserved forest area in Bhavnagar city"
+  },
+  {
+    "id": "vedanthangal_bird_sanctuary",
+    "name": "Vedanthangal Bird Sanctuary",
+    "lat": 12.54598,
+    "lng": 79.8559,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Nature preserving sanctuary in Tamil Nadu, India"
+  },
+  {
+    "id": "tansa_wildlife_sanctuary",
+    "name": "Tansa Wildlife Sanctuary",
+    "lat": 19.545,
+    "lng": 73.265,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in India"
+  },
+  {
+    "id": "sathyamangalam_tiger_reserve",
+    "name": "Sathyamangalam Tiger Reserve",
+    "lat": 11,
+    "lng": 77,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "tiger reserve in Tamil Nadu, India"
+  },
+  {
+    "id": "dadra_and_nagar_haveli_wildlife_sanctuar",
+    "name": "Dadra and Nagar Haveli Wildlife Sanctuary",
+    "lat": 20.2899,
+    "lng": 73.0949,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Dadra and Nagar Haveli Wildlife Sanctuary is a wildlife sanctuary located in the Indian Union Territory of Dadra and Nagar Haveli and Daman and Diu. The sanctuary includes the Satmalia Deer Park and Vasona Lion Safari\n\n\n== Satmalia Deer Park ==\nThe Satmalia Deer park is located near Khanvel village on Silvassa-Khanvel road, 12 km south of nearest city and district headquarter Silvassa."
+  },
+  {
+    "id": "akal_wood_fossil_park",
+    "name": "Akal Wood Fossil Park",
+    "lat": 26.825,
+    "lng": 71.04,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Akal Wood Fossil Park is a National Geological Monument of India located in Jaisalmer district, Rajasthan. It is also a Biodiversity Heritage Site."
+  },
+  {
+    "id": "limber_wildlife_sanctuary",
+    "name": "Limber Wildlife Sanctuary",
+    "lat": 34.189166666,
+    "lng": 74.165833333,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Limber Wildlife Sanctuary or Kazing Wildlife Sanctuary (also written as Qazing) is situated in Limber in Baramulla district in Indian union territory of Jammu & Kashmir. It is located, near Baramulla city and Srinagar."
+  },
+  {
+    "id": "saman_bird_sanctuary",
+    "name": "Saman Bird Sanctuary",
+    "lat": 27,
+    "lng": 79.166666666,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "bird watching area in Saman, Uttar Pradesh"
+  },
+  {
+    "id": "jeypore_reserve_forest",
+    "name": "Jeypore Reserve Forest",
+    "lat": 27.43111111,
+    "lng": 95.36055555,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Reserve Forest of India"
+  },
+  {
+    "id": "hokersar_wetland",
+    "name": "Hokersar wetland",
+    "lat": 34.095,
+    "lng": 74.7075,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "protected area in Jammu and Kashmir"
+  },
+  {
+    "id": "shettihalli_wildlife_sanctuary",
+    "name": "Shettihalli Wildlife Sanctuary",
+    "lat": 13.85,
+    "lng": 75.438888888,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildife sanctuary in Karnataka, India"
+  },
+  {
+    "id": "baghmara_pitcher_plant_wildlife_sanctuar",
+    "name": "Baghmara Pitcher Plant Wildlife Sanctuary",
+    "lat": 25.198139,
+    "lng": 90.638765,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Baghmara Pitcher plant Wildlife Sanctuary or Baghmara Wildlife Sanctuary or Baghmara Reserve Forest is a wildlife sanctuary located in the Indian state of Meghalaya. This wildlife sanctuary is a protected area for pitcher plants."
+  },
+  {
+    "id": "kadalundi_bird_sanctuary",
+    "name": "Kadalundi Bird Sanctuary",
+    "lat": 11.131,
+    "lng": 75.829,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "dilli_reserve_forest",
+    "name": "Dilli Reserve Forest",
+    "lat": 27.10388889,
+    "lng": 95.295,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Reserve Forest of India"
+  },
+  {
+    "id": "kallaperambur_lake_bird_sanctuary",
+    "name": "Kallaperambur Lake Bird Sanctuary",
+    "lat": 10.798888888,
+    "lng": 79.025833333,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife Sanctuary in Tamil Nadu, India"
+  },
+  {
+    "id": "kondakarla_va",
+    "name": "Kondakarla Āva",
+    "lat": 17.6,
+    "lng": 83,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "lagoon in India"
+  },
+  {
+    "id": "shankarghola_forest_reserve",
+    "name": "Shankarghola Forest Reserve",
+    "lat": 26.270462,
+    "lng": 90.544234,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "reserve forest"
+  },
+  {
+    "id": "mukundra_hills_tiger_reserve_mhtr_",
+    "name": "Mukundra Hills Tiger Reserve (MHTR)",
+    "lat": 24.868,
+    "lng": 75.856,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Named after the Mukandara hill range which got its name from former ruler of Kota Shri Maha Rao Mukund"
+  },
+  {
+    "id": "nelapattu_bird_sanctuary",
+    "name": "Nelapattu Bird Sanctuary",
+    "lat": 13.83325,
+    "lng": 79.94962,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Bird sanctuary"
+  },
+  {
+    "id": "buxa_tiger_reserve",
+    "name": "Buxa Tiger Reserve",
+    "lat": 26.65,
+    "lng": 89.58,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Buxa Tiger Reserve is a tiger reserve and national park in northern West Bengal, India, covering an area of 760 km2 (290 sq mi). It ranges in elevation from 60 m (200 ft) in the Gangetic Plains to 1,750 m (5,740 ft) bordering the Himalayas in the north."
+  },
+  {
+    "id": "tawa_reservoir",
+    "name": "Tawa Reservoir",
+    "lat": 22.562222222,
+    "lng": 77.977222222,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "lake in India"
+  },
+  {
+    "id": "rani_reserve_forest",
+    "name": "Rani Reserve Forest",
+    "lat": 26.33333333,
+    "lng": 91.45,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Reserve Forest of India"
+  },
+  {
+    "id": "koka_wildlife_sanctuary",
+    "name": "Koka Wildlife Sanctuary",
+    "lat": 21.206861111,
+    "lng": 79.806333333,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "badalkhol_wildlife_sanctuary",
+    "name": "Badalkhol Wildlife Sanctuary",
+    "lat": 22.552222222,
+    "lng": 81.734722222,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Badalkhol Wildlife Sanctuary is a protected area and wildlife sanctuary located in Jashpur district of the Indian state of Chhattisgarh.\n\n\n== Description ==\nThe sanctuary covers an area of 104.45 km2 (40.33 sq mi) and lies on the banks of the Eib and Dorki rivers."
+  },
+  {
+    "id": "thol_lake",
+    "name": "Thol Lake",
+    "lat": 23.375,
+    "lng": 72.625,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "lake in India"
+  },
+  {
+    "id": "topchanchi_wildlife_sanctuary",
+    "name": "Topchanchi Wildlife Sanctuary",
+    "lat": 23.9361,
+    "lng": 86.1923,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "protected area in Jharkhand, India"
+  },
+  {
+    "id": "vettangudi_bird_sanctuary",
+    "name": "Vettangudi Bird Sanctuary",
+    "lat": 10.112,
+    "lng": 78.51,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "bird sanctuary in India"
+  },
+  {
+    "id": "nawabganj_bird_sanctuary",
+    "name": "Nawabganj Bird Sanctuary",
+    "lat": 26.6191858,
+    "lng": 80.6531205,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "1st bird sanctuary of uttarpradesh"
+  },
+  {
+    "id": "rangayyanadurga_four_horned_antelope_wil",
+    "name": "Rangayyanadurga Four–horned antelope Wildlife Sanctuary",
+    "lat": 14.533333333,
+    "lng": 76.116666666,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Wildlife sanctuary in Karnataka"
+  },
+  {
+    "id": "ramgarh_vishdhari_wildlife_sanctuary",
+    "name": "Ramgarh Vishdhari Wildlife Sanctuary",
+    "lat": 25.57,
+    "lng": 75.9,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "tiger reserve in Rajasthan, India"
+  },
+  {
+    "id": "nal_sarovar_bird_sanctuary",
+    "name": "Nal Sarovar Bird Sanctuary",
+    "lat": 22.792569444,
+    "lng": 72.023111111,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "lake in India"
+  },
+  {
+    "id": "khijadiya_bird_sanctuary",
+    "name": "Khijadiya Bird Sanctuary",
+    "lat": 22.51,
+    "lng": 70.14,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Khijadiya Bird Sanctuary is a bird sanctuary located in Jamnagar district of Gujarat, India. About 300 species of migratory birds have been recorded here."
+  },
+  {
+    "id": "agasthyamala_biosphere_reserve",
+    "name": "Agasthyamala Biosphere Reserve",
+    "lat": 8.703,
+    "lng": 77.235361111,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Bio reserved of indiafull map of india The Agasthyamalai Biosphere Reserve is a biosphere reserve in India established in 2001, located in the southernmost end of the Western Ghats and includes 3,500.36 km2 (1,351.50 sq mi) of which 1828 km2 is in Kerala and 1672.36 km2 is in Tamil Nadu. It encompasses the following wildlife sanctuaries: Shendurney Wildlife Sanctuary, Peppara Wildlife Sanctuary, Neyyar Wildlife Sanctuary, and Kalakkad Mundanthurai Tiger Reserve."
+  },
+  {
+    "id": "patna_bird_sanctuary",
+    "name": "Patna Bird Sanctuary",
+    "lat": 27.518055555,
+    "lng": 78.280555555,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Protected area in Uttar Pradesh, India"
+  },
+  {
+    "id": "koothankulam_bird_sanctuary",
+    "name": "Koothankulam Bird Sanctuary",
+    "lat": 8.58102,
+    "lng": 77.76123,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "protected area in Tamil Nadu, India"
+  },
+  {
+    "id": "agra_bear_rescue_facility",
+    "name": "Agra Bear Rescue Facility",
+    "lat": 27.23583333,
+    "lng": 77.85194444,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "sloth bear rescue centre in Agra, Uttar Pradesh, India"
+  },
+  {
+    "id": "vaduvoor_bird_sanctuary",
+    "name": "Vaduvoor Bird Sanctuary",
+    "lat": 10.6989,
+    "lng": 79.3225,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Vaduvoor Bird Sanctuary located in the town of Vaduvur in Tiruvarur District in the Indian state of Tamil Nadu"
+  },
+  {
+    "id": "dabaka_reserve_forest",
+    "name": "Dabaka Reserve Forest",
+    "lat": 26.11666667,
+    "lng": 92.86916667,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Reserve Forest of India"
+  },
+  {
+    "id": "yedsi_ramling_ghat_wildlife_sanctuary",
+    "name": "Yedsi Ramling Ghat Wildlife Sanctuary",
+    "lat": 18.305,
+    "lng": 75.94,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "ameenpur_lake",
+    "name": "Ameenpur Lake",
+    "lat": 17.524166666,
+    "lng": 78.330555555,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Ameenpur Lake is a small lake in Sangareddy District in the Indian state of Telangana and on the edge of the city of Hyderabad. It is the first body of water in India to be recognised as a Biodiversity Heritage Site and is the first biodiversity site to be approved in an urban area."
+  },
+  {
+    "id": "porbandar_bird_sanctuary",
+    "name": "Porbandar Bird Sanctuary",
+    "lat": 21.635,
+    "lng": 69.619,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "bisle_reserve_forest",
+    "name": "Bisle Reserve Forest",
+    "lat": 12.732,
+    "lng": 75.677,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "reserve forest in the westernmost Hassan district of Karnataka state, India"
+  },
+  {
+    "id": "pachmarhi_biosphere_reserve",
+    "name": "Pachmarhi Biosphere Reserve",
+    "lat": 22.183,
+    "lng": 77.783,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Biosphere reserve in India | designated in 2009"
+  },
+  {
+    "id": "harike_wetland",
+    "name": "Harike Wetland",
+    "lat": 31.15,
+    "lng": 74.966666666,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Harike Wetland, with the Harike Lake in the deeper part of it, east of the Harike village also known as \"Hari-ke-Pattan\" (Port of Harike), is a Ramsar site and the largest wetland in northern India on the border of Tarn Taran Sahib district and Ferozepur district of the Punjab state in India created by the manmade Harike Barrage headworks immediate downstream of the confluence of Beas and Sutlej rivers. Harike village is accessible by the NH-54 (Taran Taran 35 km north), NH-703A (Firozepur 45 km southwest and Kapurthala 60 km northeast), and NH-703B (Bhikhiwind 30 km northwest and Moga 50 km southeast)."
+  },
+  {
+    "id": "bherjan_reserve_forest",
+    "name": "Bherjan Reserve Forest",
+    "lat": 26.97,
+    "lng": 94.95055556,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Reserve Forest of India"
+  },
+  {
+    "id": "badsaitilla_reserve_forest",
+    "name": "Badsaitilla Reserve Forest",
+    "lat": 24.33,
+    "lng": 92.35,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Reserve Forest of India"
+  },
+  {
+    "id": "kumarakom_bird_sanctuary",
+    "name": "Kumarakom Bird Sanctuary",
+    "lat": 9.5,
+    "lng": 76.52,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Kumarakom Bird Sanctuary (also known as Vembanad Bird Sanctuary) is situated at Kumarakom in Kottayam taluk of Kottayam district in the Indian state of Kerala, on the banks of Vembanad Lake. Set in the Kerala Backwaters, the bird sanctuary is visited by many migratory bird species."
+  },
+  {
+    "id": "najafgarh_drain_bird_sanctuary",
+    "name": "Najafgarh drain bird sanctuary",
+    "lat": 28.504,
+    "lng": 76.944,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "A notable bird sanctuary located in India."
+  },
+  {
+    "id": "mookambika_wildlife_sanctuary",
+    "name": "Mookambika Wildlife Sanctuary",
+    "lat": 13.7,
+    "lng": 74.65,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "wildlife sanctuary in Karnataka, India"
+  },
+  {
+    "id": "bassi_wildlife_sanctuary",
+    "name": "Bassi Wildlife Sanctuary",
+    "lat": 25.025,
+    "lng": 74.85833056,
+    "type": "bird_sanctuary",
+    "icon": "🦅",
+    "radius_km": 15,
+    "story": "Bassi Wildlife Sanctuary is a wildlife sanctuary near Bassi in Chittorgarh district of Rajasthan, India, 5 kilometres from the Bassi Fort Palace. It covers 15,290 hectares and was established in 1988."
+  }
+]
