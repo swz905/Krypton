@@ -69,6 +69,11 @@ export function init(io) {
         stopBtn.disabled = false;
       }
 
+      // Run initial POI check using reference train position
+      if (data.center && window._poiCheck) {
+        window._poiCheck(data.center[0], data.center[1], 0);
+      }
+
       scanBtn.disabled = false;
 
     } catch (err) {
@@ -145,6 +150,11 @@ export function init(io) {
           if (map.hasLayer(mk)) mk.removeFrom(map);
           delete markers[t.train_number];
         }
+      }
+
+      // Feed reference train position to POI geofence engine
+      if (t.is_reference && window._poiCheck) {
+        window._poiCheck(c[0], c[1], t.speed || 0);
       }
     }
 

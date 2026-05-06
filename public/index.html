@@ -80,6 +80,44 @@
     </section>
   </aside>
 
+  <!-- POI Alert Card Overlay -->
+  <div id="poiAlert" class="poi-alert" style="display:none;">
+    <div class="poi-alert-card">
+      <button id="poiDismiss" class="poi-dismiss">&times;</button>
+      <div class="poi-icon" id="poiIcon"></div>
+      <div class="poi-type-badge" id="poiTypeBadge"></div>
+      <h3 id="poiName"></h3>
+      <p id="poiStory"></p>
+      <div class="poi-meta">
+        <span id="poiYear"></span>
+        <span id="poiDist"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Achievement Toast -->
+  <div id="achieveToast" class="achieve-toast" style="display:none;">
+    <div class="achieve-toast-inner">
+      <span class="achieve-toast-label">ACHIEVEMENT UNLOCKED</span>
+      <span id="achieveName" class="achieve-toast-name"></span>
+      <span id="achieveDesc" class="achieve-toast-desc"></span>
+    </div>
+  </div>
+
+  <!-- Achievements Button (floating) -->
+  <button id="achieveBtn" class="achieve-btn" title="Achievements">🏆</button>
+
+  <!-- Achievements Modal -->
+  <div id="achieveModal" class="achieve-modal" style="display:none;">
+    <div class="achieve-modal-content">
+      <div class="achieve-modal-header">
+        <h2>🏆 Achievements</h2>
+        <button id="achieveClose" class="poi-dismiss">&times;</button>
+      </div>
+      <div id="achieveList" class="achieve-list"></div>
+    </div>
+  </div>
+
   <datalist id="stationList"></datalist>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
