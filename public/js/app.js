@@ -118,8 +118,68 @@ document.getElementById('achieveModal')?.addEventListener('click', (e) => {
 onPOIAlert(showPOIAlert);
 onAchievement(showAchievementToast);
 
-// Expose checkPosition so radar.js can call it
-window._poiCheck = checkPosition;
+// ─── GPS Mode Toggle ─────────────────────────────────
+let gpsWatchId = null;
+let lastGpsCoords = null;
+let lastGpsSpeed = 0;
+window.gpsMode = false;
+
+const gpsToggle = document.getElementById('gpsToggle');
+const gpsStatusEl = document.getElementById('gpsStatus');
+
+gpsToggle?.addEventListener('change', () => {
+  if (gpsToggle.checked) {
+    // Start watching phone GPS
+    if (!navigator.geolocation) {
+      gpsStatusEl.textContent = '(not supported)';
+      gpsToggle.checked = false;
+      return;
+    }
+
+    gpsStatusEl.textContent = '(acquiring...)';
+    window.gpsMode = true;
+
+    gpsWatchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        lastGpsCoords = [pos.coords.latitude, pos.coords.longitude];
+        lastGpsSpeed = pos.coords.speed != null ? Math.round(pos.coords.speed * 3.6) : 0; // m/s → km/h
+        gpsStatusEl.textContent = `(${lastGpsSpeed} km/h)`;
+
+        // Feed phone GPS to POI engine
+        checkPosition(lastGpsCoords[0], lastGpsCoords[1], lastGpsSpeed);
+      },
+      (err) => {
+        console.error('[gps] Error:', err.message);
+        gpsStatusEl.textContent = `(error: ${err.message})`;
+        window.gpsMode = false;
+        gpsToggle.checked = false;
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 5000,
+        timeout: 15000,
+      }
+    );
+    console.log('[gps] Phone GPS mode ON');
+  } else {
+    // Stop watching
+    if (gpsWatchId != null) {
+      navigator.geolocation.clearWatch(gpsWatchId);
+      gpsWatchId = null;
+    }
+    window.gpsMode = false;
+    lastGpsCoords = null;
+    gpsStatusEl.textContent = '';
+    console.log('[gps] Phone GPS mode OFF — using API location');
+  }
+});
+
+// Expose checkPosition so radar.js can call it (only when NOT in GPS mode)
+window._poiCheck = (lat, lng, speed) => {
+  // If GPS mode is on, the phone GPS feeds POI directly — skip API coords
+  if (window.gpsMode) return;
+  checkPosition(lat, lng, speed);
+};
 
 // Init modules
 radar.init(socket);
