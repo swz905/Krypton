@@ -1,11 +1,13 @@
 // server/routes.js — HTTP API routes
 import { Router } from 'express';
+import { readFileSync } from 'fs';
 import cfg from './config.js';
 import * as db from './db.js';
 import { refreshSnapshot, getCachedSnapshot, fetchTrainLive } from './railradar.js';
 import { getRecentLive } from './tracking.js';
 
 const router = Router();
+let poiCache = null;
 
 // Haversine distance in km
 function haversine([lat1, lon1], [lat2, lon2]) {
@@ -14,6 +16,122 @@ function haversine([lat1, lon1], [lat2, lon2]) {
   const dLat = toR(lat2 - lat1), dLon = toR(lon2 - lon1);
   const a = Math.sin(dLat/2)**2 + Math.cos(toR(lat1)) * Math.cos(toR(lat2)) * Math.sin(dLon/2)**2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function loadPois() {
+  if (poiCache) return poiCache;
+  const files = [
+    { category: 'Historical', file: '../public/data/poi_historical.json' },
+    { category: 'Rivers', file: '../public/data/poi_rivers.json' },
+    { category: 'Wildlife', file: '../public/data/poi_wildlife.json' },
+  ];
+
+  poiCache = files.flatMap(({ category, file }) => {
+    try {
+      const url = new URL(file, import.meta.url);
+      const rows = JSON.parse(readFileSync(url, 'utf8'));
+      return rows
+        .filter(p => Number.isFinite(Number(p.lat)) && Number.isFinite(Number(p.lng)))
+        .map(p => ({ ...p, category }));
+    } catch (err) {
+      console.warn(`[poi] Failed to load ${file}:`, err.message);
+      return [];
+    }
+  });
+  console.log(`[poi] Loaded ${poiCache.length} journey POIs.`);
+  return poiCache;
+}
+
+function distancePointToSegmentKm(point, a, b) {
+  const lat0 = point[0] * Math.PI / 180;
+  const kmPerLat = 111.32;
+  const kmPerLng = 111.32 * Math.cos(lat0);
+  const px = point[1] * kmPerLng;
+  const py = point[0] * kmPerLat;
+  const ax = a[1] * kmPerLng;
+  const ay = a[0] * kmPerLat;
+  const bx = b[1] * kmPerLng;
+  const by = b[0] * kmPerLat;
+  const dx = bx - ax;
+  const dy = by - ay;
+  if (dx === 0 && dy === 0) return Math.hypot(px - ax, py - ay);
+  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)));
+  const x = ax + t * dx;
+  const y = ay + t * dy;
+  return Math.hypot(px - x, py - y);
+}
+
+function distanceToRouteKm(point, routeCoords) {
+  if (!routeCoords.length) return Infinity;
+  if (routeCoords.length === 1) return haversine(point, routeCoords[0]);
+
+  let best = Infinity;
+  for (let i = 0; i < routeCoords.length - 1; i++) {
+    best = Math.min(best, distancePointToSegmentKm(point, routeCoords[i], routeCoords[i + 1]));
+  }
+  return best;
+}
+
+function buildJourneyContext(futureStops) {
+  const routeStations = [];
+  const seen = new Set();
+
+  for (const stop of futureStops) {
+    if (seen.has(stop.stnCode)) continue;
+    const coords = db.getStationCoords(stop.stnCode);
+    if (!coords) continue;
+    seen.add(stop.stnCode);
+    routeStations.push({
+      code: stop.stnCode,
+      coords,
+      km: stop.km ?? null,
+      eta_min: null,
+    });
+  }
+
+  const routeCoords = routeStations.map(s => s.coords);
+  const pois = loadPois()
+    .map(p => {
+      const coords = [Number(p.lat), Number(p.lng)];
+      const routeDistanceKm = distanceToRouteKm(coords, routeCoords);
+      const thresholdKm = Math.max(Number(p.radius_km) || 5, 8);
+      if (routeDistanceKm > thresholdKm) return null;
+
+      let nearestStation = null;
+      let nearestStationDistanceKm = Infinity;
+      for (const station of routeStations) {
+        const d = haversine(coords, station.coords);
+        if (d < nearestStationDistanceKm) {
+          nearestStationDistanceKm = d;
+          nearestStation = station;
+        }
+      }
+
+      return {
+        id: p.id,
+        name: p.name,
+        type: p.type,
+        category: p.category,
+        icon: p.icon || '',
+        coords,
+        radius_km: p.radius_km,
+        story: p.story || '',
+        year: p.year || '',
+        route_distance_km: Math.round(routeDistanceKm * 10) / 10,
+        nearest_station: nearestStation ? nearestStation.code : null,
+        nearest_station_distance_km: Number.isFinite(nearestStationDistanceKm)
+          ? Math.round(nearestStationDistanceKm * 10) / 10
+          : null,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.route_distance_km - b.route_distance_km)
+    .slice(0, 80);
+
+  return {
+    route: routeStations,
+    pois,
+  };
 }
 
 // GET /api/stations — for autocomplete
@@ -66,6 +184,7 @@ router.post('/api/scan', async (req, res) => {
     if (!futureStationCodes.length) {
       return res.json({ message: 'Train near destination.', trains: [], events: [] });
     }
+    const journeyContext = buildJourneyContext(futureStops);
 
     // 4. From bulk map, find all RUNNING trains that pass through ANY station on our route
     const allStationCodes = refSchedule.map(s => s.stnCode);
@@ -213,6 +332,8 @@ router.post('/api/scan', async (req, res) => {
         coords: refCoords,
         last_updated: live.lastUpdated,
       },
+      journey_route: journeyContext.route,
+      journey_pois: journeyContext.pois,
       trains_to_track: [String(train_number), ...trackedNums],
       journey_date: jDate,
       train_dates: trainDates,

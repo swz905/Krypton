@@ -76,18 +76,21 @@ async function main() {
 
     const name = el.tags?.name || el.tags?.['bridge:name'] || '';
     
+    // Ignore unnamed bridges (OSM marks every tiny 5-meter ditch as a bridge)
+    if (!name) continue;
+
     // Check if too close to an existing bridge (group them)
     const tooClose = bridges.some(b => haversine(lat, lng, b.lat, b.lng) < 3);
     if (tooClose) continue;
 
     bridges.push({
       id: `osm_bridge_${el.id}`,
-      name: name || `Major Railway Bridge`,
+      name: name,
       lat, lng,
-      type: name ? 'bridge' : 'river',
+      type: 'bridge',
       icon: '🌉',
       radius_km: 3,
-      story: name ? `You are crossing ${name}.` : 'You are crossing a major railway bridge.'
+      story: `You are crossing ${name}.`
     });
   }
 

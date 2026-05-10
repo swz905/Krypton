@@ -24,6 +24,10 @@ app.use(routes);
 
 // Static files (public/) — serves index.html for /
 const publicDir = join(__dirname, 'public');
+app.get('/sw.js', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.sendFile(join(publicDir, 'sw.js'));
+});
 app.use(express.static(publicDir));
 
 // Fallback: serve index.html for root and any unmatched routes (SPA pattern)

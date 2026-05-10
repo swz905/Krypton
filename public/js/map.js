@@ -12,6 +12,7 @@ export const layers = {
   trains: L.layerGroup().addTo(map),
   ref:    L.layerGroup().addTo(map),
   reach:  L.layerGroup().addTo(map),
+  journey: L.layerGroup().addTo(map),
 };
 
 export const markers = {};        // trainNumber → marker
@@ -21,6 +22,7 @@ export function clearAll() {
   layers.trains.clearLayers();
   layers.ref.clearLayers();
   layers.reach.clearLayers();
+  layers.journey.clearLayers();
   Object.keys(markers).forEach(k => delete markers[k]);
   Object.keys(prevCoords).forEach(k => delete prevCoords[k]);
 }

@@ -6,6 +6,8 @@ let mainTrain = '';
 let journeyDate = '';
 let eventsTimer = null;
 let trackedTrains = [];
+let journeyData = { route: [], pois: [] };
+let journeyVisible = true;
 
 export function init(io) {
   socket = io;
@@ -13,6 +15,7 @@ export function init(io) {
   const scanBtn = document.getElementById('scanBtn');
   const stopBtn = document.getElementById('stopBtn');
   const liveBar = document.getElementById('liveStatus');
+  const journeyToggle = document.getElementById('journeyToggle');
 
   const dateInput = form.querySelector('[name="journey_date"]');
   if (dateInput && !dateInput.value) {
@@ -25,6 +28,7 @@ export function init(io) {
     stopBtn.style.display = 'none';
     liveBar.style.display = 'none';
     clearAll();
+    resetJourneyOverlay();
     showStatus('radarStatus', 'Fetching live data...', 'info');
     document.getElementById('radarResults').innerHTML = '';
 
@@ -46,6 +50,7 @@ export function init(io) {
 
       showStatus('radarStatus', data.message, 'success');
       renderResults(data);
+      renderJourneyOverlay(data);
       trackedTrains = data.trains_to_track || [];
 
       // Show live status
@@ -87,6 +92,12 @@ export function init(io) {
     stopBtn.style.display = 'none';
     liveBar.style.display = 'none';
     trackedTrains = [];
+  });
+
+  journeyToggle.addEventListener('click', () => {
+    journeyVisible = !journeyVisible;
+    drawJourneyLayer();
+    updateJourneyToggle();
   });
 
   socket.on('tracking_status', (d) => {
@@ -172,6 +183,128 @@ export function init(io) {
       rows.forEach(r => tbody.appendChild(r));
     }
   });
+}
+
+function resetJourneyOverlay() {
+  journeyData = { route: [], pois: [] };
+  journeyVisible = true;
+  layers.journey.clearLayers();
+  const overlay = document.getElementById('journeyOverlay');
+  if (overlay) overlay.style.display = 'none';
+  updateJourneyToggle();
+}
+
+function renderJourneyOverlay(data) {
+  journeyData = {
+    route: Array.isArray(data.journey_route) ? data.journey_route : [],
+    pois: Array.isArray(data.journey_pois) ? data.journey_pois : [],
+  };
+
+  const overlay = document.getElementById('journeyOverlay');
+  const summary = document.getElementById('journeySummary');
+  if (!journeyData.route.length) {
+    resetJourneyOverlay();
+    return;
+  }
+
+  const routeCount = journeyData.route.length;
+  const poiCount = journeyData.pois.length;
+  summary.textContent = `${routeCount} stops, ${poiCount} things on the way`;
+  overlay.style.display = 'flex';
+  journeyVisible = true;
+  updateJourneyToggle();
+  drawJourneyLayer();
+}
+
+function updateJourneyToggle() {
+  const btn = document.getElementById('journeyToggle');
+  if (!btn) return;
+  btn.textContent = journeyVisible ? 'Hide' : 'Show';
+  btn.classList.toggle('muted', !journeyVisible);
+}
+
+function drawJourneyLayer() {
+  layers.journey.clearLayers();
+  if (!journeyVisible || !journeyData.route.length) return;
+
+  const coords = journeyData.route.map(s => s.coords).filter(Boolean);
+  if (coords.length > 1) {
+    L.polyline(coords, {
+      color: '#2a9d8f',
+      weight: 4,
+      opacity: 0.72,
+      dashArray: '10 8',
+      lineCap: 'round',
+      lineJoin: 'round',
+    }).addTo(layers.journey).bindTooltip('Remaining route');
+  }
+
+  for (let i = 0; i < journeyData.route.length; i++) {
+    const station = journeyData.route[i];
+    if (!station.coords) continue;
+    const isMajorDot = i === 0 || i === journeyData.route.length - 1 || i % 5 === 0;
+    L.circleMarker(station.coords, {
+      radius: isMajorDot ? 4 : 2,
+      fillColor: i === 0 ? '#e63946' : '#2a9d8f',
+      color: '#fff',
+      weight: isMajorDot ? 1 : 0.5,
+      fillOpacity: isMajorDot ? 0.9 : 0.45,
+      opacity: 0.7,
+    }).addTo(layers.journey).bindTooltip(station.code, { direction: 'top' });
+  }
+
+  for (const poi of journeyData.pois) {
+    if (!poi.coords) continue;
+    const marker = L.marker(poi.coords, { icon: poiIcon(poi) })
+      .bindTooltip(`<b>${escapeHtml(poi.name)}</b><br>${escapeHtml(poi.category || poi.type || 'POI')}`, { direction: 'top' })
+      .bindPopup(poiPopup(poi));
+    marker.addTo(layers.journey);
+  }
+}
+
+function poiIcon(poi) {
+  const color = poiColor(poi.category || poi.type);
+  const letter = (poi.category || poi.type || '?').slice(0, 1).toUpperCase();
+  return L.divIcon({
+    className: 'poi-route-marker',
+    html: `<span style="background:${color}">${letter}</span>`,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+    popupAnchor: [0, -12],
+  });
+}
+
+function poiColor(kind = '') {
+  const k = String(kind).toLowerCase();
+  if (k.includes('river') || k.includes('bridge')) return '#0077b6';
+  if (k.includes('wildlife')) return '#2a9d8f';
+  if (k.includes('historical') || k.includes('battle') || k.includes('fort')) return '#e76f51';
+  return '#6c757d';
+}
+
+function poiPopup(poi) {
+  const meta = [
+    poi.year ? escapeHtml(poi.year) : '',
+    poi.nearest_station ? `Near ${escapeHtml(poi.nearest_station)}` : '',
+    poi.route_distance_km != null ? `${poi.route_distance_km} km from route` : '',
+  ].filter(Boolean).join(' • ');
+
+  return `<div class="poi-popup">
+    <strong>${escapeHtml(poi.name)}</strong>
+    <span>${escapeHtml(poi.category || poi.type || 'POI')}</span>
+    ${meta ? `<small>${meta}</small>` : ''}
+    ${poi.story ? `<p>${escapeHtml(poi.story)}</p>` : ''}
+  </div>`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  }[ch]));
 }
 
 

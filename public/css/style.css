@@ -127,6 +127,18 @@ input[type="range"] { margin-top: 4px; accent-color: var(--accent); }
 }
 .btn.primary:hover:not(:disabled) { box-shadow: 0 4px 16px rgba(0,119,182,.35); }
 .btn.danger { background: var(--danger); color: #fff; }
+.btn.small {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  font-size: 12px;
+  background: var(--accent);
+  color: #fff;
+}
+.btn.small.muted {
+  background: var(--bg);
+  color: var(--text-2);
+  border: 1px solid var(--border);
+}
 
 /* STATUS */
 .status-msg {
@@ -157,6 +169,28 @@ input[type="range"] { margin-top: 4px; accent-color: var(--accent); }
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
   50%      { opacity: .4; transform: scale(.7); }
+}
+
+.journey-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid #cceee8;
+  background: #eefaf7;
+  border-radius: var(--radius);
+}
+.journey-overlay strong {
+  display: block;
+  font-size: 13px;
+  color: var(--text);
+}
+.journey-overlay span {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--text-2);
 }
 
 /* GPS TOGGLE */
@@ -291,6 +325,50 @@ input[type="range"] { margin-top: 4px; accent-color: var(--accent); }
 
 /* TRAIN MARKER */
 .train-marker { background: none !important; border: none !important; filter: drop-shadow(0 1px 2px rgba(0,0,0,.3)); }
+.poi-route-marker {
+  background: none !important;
+  border: none !important;
+}
+.poi-route-marker span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+}
+.poi-popup {
+  max-width: 260px;
+}
+.poi-popup strong,
+.poi-popup span,
+.poi-popup small {
+  display: block;
+}
+.poi-popup strong {
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+.poi-popup span {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.poi-popup small {
+  margin-top: 4px;
+  color: var(--text-2);
+}
+.poi-popup p {
+  margin-top: 8px;
+  line-height: 1.45;
+}
 
 /* SCROLLBAR */
 .panel::-webkit-scrollbar { width: 4px; }
