@@ -146,8 +146,14 @@ export function setupTracking(io) {
                         
                         if (slowerSpeed < 10 && slowerStationCode) {
                            const stnCoords = db.getStationCoords(slowerStationCode);
-                           if (stnCoords && haversine(slowerCoords, stnCoords) <= 3) { // User requested 3km threshold
+                           if (stnCoords && haversine(slowerCoords, stnCoords) <= 3) { 
                              isStationOvertake = true;
+                             // Ensure the faster train doesn't also stop at this station
+                             const fasterTrainCode = mainSpeed < speed ? tn : mainTrain;
+                             const fasterSchedule = db.getTrainSchedule(fasterTrainCode);
+                             if (fasterSchedule && fasterSchedule.some(s => s.stnCode === slowerStationCode)) {
+                               isStationOvertake = false;
+                             }
                            }
                         }
                         
