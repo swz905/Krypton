@@ -163,6 +163,11 @@ export function init(io) {
         }
       }
 
+      if (t.intercept) {
+        showInterceptAlert(t.intercept);
+      }
+    }
+
       // Feed reference train position to POI geofence engine
       if (t.is_reference && window._poiCheck) {
         window._poiCheck(c[0], c[1], t.speed || 0);
@@ -407,3 +412,39 @@ function showStatus(id, msg, type) {
   el.textContent = msg;
   el.className = 'status-msg ' + type;
 }
+
+let lastInterceptTime = 0;
+function showInterceptAlert(intercept) {
+  // Prevent spamming the alert every 2 minutes
+  if (Date.now() - lastInterceptTime < 120000) return; 
+  lastInterceptTime = Date.now();
+
+  const alertDiv = document.getElementById('interceptAlert');
+  const typeBadge = document.getElementById('interceptType');
+  const title = document.getElementById('interceptTitle');
+  const desc = document.getElementById('interceptDesc');
+
+  if (!alertDiv || !typeBadge || !title || !desc) return;
+
+  typeBadge.textContent = intercept.type.toUpperCase();
+  typeBadge.style.background = intercept.type === 'overtake' ? '#f59e0b' : '#ef4444';
+  
+  title.textContent = intercept.target_name || 'Unknown Train';
+  desc.textContent = `Approaching in ~${intercept.minutes} minute${intercept.minutes > 1 ? 's' : ''}!`;
+
+  alertDiv.style.display = 'block';
+
+  // Haptic feedback if supported
+  if (navigator.vibrate) {
+    navigator.vibrate([200, 100, 200, 100, 500]);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const dismissBtn = document.getElementById('interceptDismiss');
+  if (dismissBtn) {
+    dismissBtn.addEventListener('click', () => {
+      document.getElementById('interceptAlert').style.display = 'none';
+    });
+  }
+});
