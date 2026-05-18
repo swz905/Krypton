@@ -112,6 +112,54 @@ export function setupTracking(io) {
                 heading = getTrainHeading(schedule, loc.stationCode);
               }
 
+              // --- INTERCEPT PREDICTION LOGIC ---
+              let intercept = null;
+              if (tn !== mainTrain && refCoords && dist != null && dist <= 15) { // Only check if within 15km
+                const mainLive = getRecentLive(mainTrain);
+                if (mainLive && trend === 'decreasing') {
+                  const mainSpeed = mainLive.speed || 0;
+                  let mainHeading = 0;
+                  const mainSchedule = db.getTrainSchedule(mainTrain);
+                  if (mainSchedule && mainLive.stationCode) {
+                    mainHeading = getTrainHeading(mainSchedule, mainLive.stationCode);
+                  }
+                  
+                  let headingDiff = Math.abs(mainHeading - heading);
+                  if (headingDiff > 180) headingDiff = 360 - headingDiff;
+                  const isOpposite = headingDiff > 90;
+                  
+                  let relativeSpeed = isOpposite ? (mainSpeed + speed) : Math.abs(speed - mainSpeed);
+                  
+                  if (relativeSpeed > 10) {
+                    const timeHours = dist / relativeSpeed;
+                    const timeMins = timeHours * 60;
+                    
+                    if (timeMins > 0 && timeMins <= 5) { // Predict up to 5 mins ahead
+                      if (isOpposite) {
+                        intercept = { type: 'crossing', minutes: Math.ceil(timeMins), target_name: live.trainName || tn };
+                      } else {
+                        // Overtake logic: 'decreasing' trend + same direction means one is catching up
+                        let isStationOvertake = false;
+                        const slowerSpeed = Math.min(mainSpeed, speed);
+                        const slowerStationCode = mainSpeed < speed ? mainLive.stationCode : loc.stationCode;
+                        const slowerCoords = mainSpeed < speed ? refCoords : coords;
+                        
+                        if (slowerSpeed < 10 && slowerStationCode) {
+                           const stnCoords = db.getStationCoords(slowerStationCode);
+                           if (stnCoords && haversine(slowerCoords, stnCoords) <= 3) { // User requested 3km threshold
+                             isStationOvertake = true;
+                           }
+                        }
+                        
+                        if (relativeSpeed > 30 || isStationOvertake) {
+                           intercept = { type: 'overtake', minutes: Math.ceil(timeMins), target_name: live.trainName || tn };
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+
               socket.emit('location_update', {
                 trains: [{
                   train_number: tn,
@@ -125,7 +173,8 @@ export function setupTracking(io) {
                   status: loc.status || '',
                   delay_min: live.delayMinutes,
                   has_passed: hasPassed,
-                  heading: heading
+                  heading: heading,
+                  intercept: intercept
                 }],
                 updated_at: new Date().toISOString(),
                 closest_km: Number.isFinite(closestKm) ? Math.round(closestKm * 10) / 10 : null,
