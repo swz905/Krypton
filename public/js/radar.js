@@ -166,7 +166,6 @@ export function init(io) {
       if (t.intercept) {
         showInterceptAlert(t.intercept);
       }
-    }
 
       // Feed reference train position to POI geofence engine
       if (t.is_reference && window._poiCheck) {
