@@ -1,10 +1,24 @@
 // public/js/map.js — Leaflet map abstraction
 const map = L.map('map', { zoomControl: false }).setView([22.5, 78.9], 5);
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+const osm = L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
   maxZoom: 19,
-  attribution: '&copy; <a href="https://carto.com/">CARTO</a> &bull; &copy; <a href="https://osm.org/">OSM</a>'
-}).addTo(map);
+  maxNativeZoom: 18,
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+});
+
+const esri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+  maxZoom: 19,
+  maxNativeZoom: 18,
+  attribution: 'Tiles &copy; Esri'
+});
+
+osm.addTo(map);
+
+L.control.layers({
+  'OpenStreetMap': osm,
+  'Esri Streets': esri,
+}, null, { position: 'topright' }).addTo(map);
 
 L.control.zoom({ position: 'topright' }).addTo(map);
 

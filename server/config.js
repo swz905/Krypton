@@ -9,9 +9,10 @@ export default {
   port:          parseInt(process.env.PORT || '5000', 10),
   dataDir:       join(__dirname, '..', 'data'),
   dbPath:        join(__dirname, '..', 'data', 'ir.db'),
+  proxyUrl:      (process.env.PROXY_URL || '').trim() || null,
   railradar: {
-    baseUrl:     process.env.RAILRADAR_BASE_URL   || 'https://api.railradar.in',
-    endpoint:    process.env.LIVE_SNAPSHOT_ENDPOINT || '/api/v1/trains/live-map',
+    baseUrl:     process.env.RAILRADAR_BASE_URL   || 'https://railradar.in',
+    endpoint:    process.env.LIVE_SNAPSHOT_ENDPOINT || '/app/v1/live-map',
     apiKey:      (process.env.RAILRADAR_API_KEY    || '').trim(),
     pollSeconds: Math.max(20, parseInt(process.env.LIVE_SNAPSHOT_POLL_SECONDS || '60', 10)),
   },

@@ -64,7 +64,7 @@ export function setupTracking(io) {
 
               const prevLive = getRecentLive(tn);
               let trend = 'stable';
-              let speed = 0;
+              let speed = (loc.status === 'at_station' || loc.status === 'arrived') ? 0 : (loc.speed || null);
 
               if (prevLive) {
                 if (prevLive.distanceToReferenceKm != null && dist != null) {
@@ -80,14 +80,11 @@ export function setupTracking(io) {
                 const distMoved = haversine(prevLive.coords, coords);
                 const timeElapsedHr = (currentTs - prevTs) / 3600000;
                 
-                if (timeElapsedHr > 0 && distMoved >= 0.1) {
+                if (timeElapsedHr > 0 && distMoved >= 0.05) {
                   speed = Math.round(distMoved / timeElapsedHr);
                   console.log(`[speed] ${tn}: moved ${distMoved.toFixed(2)}km in ${timeElapsedHr.toFixed(3)}hr -> ${speed} km/h`);
-                } else if (prevLive.speed) {
+                } else if (prevLive.speed != null) {
                   speed = prevLive.speed; // carry over recent speed if barely moved or same timestamp
-                } else if (timeElapsedHr > 0 || distMoved > 0) {
-                  // Log why it didn't calculate speed if it moved or time passed
-                  console.log(`[speed] ${tn}: skip calc. distMoved=${distMoved.toFixed(3)}km, timeElapsedHr=${timeElapsedHr.toFixed(3)}hr`);
                 }
               }
 
@@ -166,10 +163,11 @@ export function setupTracking(io) {
                 }
               }
 
+              const trainNameLookup = live.trainName || db.getTrainDetails([tn])[tn]?.name || `Train ${tn}`;
               socket.emit('location_update', {
                 trains: [{
                   train_number: tn,
-                  train_name: live.trainNumber || tn,
+                  train_name: trainNameLookup,
                   coords,
                   distance_km: dist != null ? Math.round(dist * 10) / 10 : null,
                   trend,

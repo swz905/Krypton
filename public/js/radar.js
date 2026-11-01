@@ -127,6 +127,11 @@ export function init(io) {
       prevCoords[t.train_number] = c;
 
       if (row) {
+        const nameCell = row.cells[1];
+        if (nameCell && t.train_name && (!nameCell.textContent || nameCell.textContent === 'N/A' || nameCell.textContent.startsWith('Train '))) {
+          nameCell.textContent = t.train_name;
+        }
+
         const stnCell = row.querySelector('.stn');
         if (stnCell) stnCell.textContent = t.current_station || '';
         
@@ -140,8 +145,14 @@ export function init(io) {
         }
 
         const spdCell = row.querySelector('.spd');
-        if (spdCell && t.speed != null) {
-          spdCell.textContent = t.speed + ' km/h';
+        if (spdCell) {
+          if (t.speed != null && t.speed > 0) {
+            spdCell.textContent = t.speed + ' km/h';
+          } else if (t.status === 'at_station' || t.status === 'arrived' || t.speed === 0) {
+            spdCell.textContent = '0 km/h';
+          } else {
+            spdCell.textContent = '-';
+          }
         }
 
         // Dynamically hide/show based on live distance
@@ -331,7 +342,7 @@ function renderResults(data) {
   for (const t of data.trains || []) {
     const cls = t.is_reference ? ' class="ref"' : '';
     const distStr = t.distance_km != null ? t.distance_km + ' km' : '';
-    const spdStr = t.speed != null ? t.speed + ' km/h' : '-';
+    const spdStr = (t.speed != null && t.speed > 0) ? `${t.speed} km/h` : ((t.status === 'at_station' || t.status === 'arrived' || t.speed === 0) ? '0 km/h' : '-');
     const distVal = t.distance_km != null ? t.distance_km : Infinity;
     
     const isVisible = t.is_reference || distVal <= window.currentUiRadius;

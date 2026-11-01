@@ -189,9 +189,12 @@ router.post('/api/scan', async (req, res) => {
     // 4. From bulk map, find all RUNNING trains that pass through ANY station on our route
     const allStationCodes = refSchedule.map(s => s.stnCode);
     const snap = await refreshSnapshot();
-    if (snap.error) return res.status(502).json({ error: snap.error });
+    // Graceful degradation: if bulk snapshot is unavailable, proceed with empty candidates
+    if (snap.error) {
+      console.warn(`[scan] Snapshot unavailable (${snap.error}). Proceeding with reference train only.`);
+    }
 
-    const candidates = db.getTrainsAtStations(allStationCodes, String(train_number));
+    const candidates = snap.error ? [] : db.getTrainsAtStations(allStationCodes, String(train_number));
     const runningTrains = new Set(snap.rows.map(r => r._tn));
 
     // Unique running trains where the common station is still AHEAD of them AND within radius
@@ -239,14 +242,20 @@ router.post('/api/scan', async (req, res) => {
 
     // 5. Build results — only the relevant trains
     const results = [];
+    const allTrainNumbers = [String(train_number), ...relevantTrainNums];
+    const trainDetailsMap = db.getTrainDetails(allTrainNumbers);
 
     // Add the reference train itself (with real GPS)
     const refStnName = db.getStationNames([refStation])[refStation] || refStation;
+    const refDetail = trainDetailsMap[String(train_number)];
+    const refTrainName = live.trainName || refDetail?.name || snap.index[String(train_number)]?._name || 'Your Train';
+    const refSpeed = loc.speed != null ? Math.round(loc.speed) : (loc.status === 'at_station' || loc.status === 'arrived' ? 0 : null);
     results.push({
       train_number: String(train_number),
-      train_name: snap.index[String(train_number)]?._name || 'Your Train',
+      train_name: refTrainName,
       coords: refCoords,
       distance_km: 0,
+      speed: refSpeed,
       is_reference: true,
       current_station: refStnName,
       delay_min: live.delayMinutes,
@@ -297,13 +306,18 @@ router.post('/api/scan', async (req, res) => {
         }
       }
 
+      const detail = trainDetailsMap[tn];
+      const tName = detail?.name || row._name || `Train ${tn}`;
+      const tSpeed = (row.status === 'at_station' || row.status === 'arrived') ? 0 : null;
+
       results.push({
         train_number: tn,
-        train_name: row._name || 'N/A',
+        train_name: tName,
         coords,
         distance_km: Math.round(dist * 10) / 10,
+        speed: tSpeed,
         is_reference: false,
-        current_station: row.current_station_name || row.current_station || '',
+        current_station: row.current_station_name || row.current_station || row.last_station || '',
         direction: isOpposite ? 'opposite' : 'same',
         heading: getTrainHeading(otherSchedule, row.current_station)
       });
@@ -314,8 +328,8 @@ router.post('/api/scan', async (req, res) => {
 
     results.sort((a, b) => a.distance_km - b.distance_km);
 
-    // Only track trains that passed the radius filter
-    const trackedNums = results.filter(r => !r.is_reference).map(r => r.train_number);
+    // Only track trains that passed the radius filter (prioritize closest 25 for fast loop updates)
+    const trackedNums = results.filter(r => !r.is_reference).map(r => r.train_number).slice(0, 25);
 
     res.json({
       message: `${trackedNums.length} trains found within ${searchRadius} km of ${train_number}.`,
@@ -376,7 +390,17 @@ router.post('/api/events', async (req, res) => {
     if (currentIdx < 0) currentIdx = 0;
 
     const snap = await refreshSnapshot();
-    if (snap.error) return res.status(502).json({ error: snap.error });
+    // Graceful degradation: if snapshot unavailable, return empty events
+    if (snap.error) {
+      console.warn(`[events] Snapshot unavailable (${snap.error}). Returning empty events.`);
+      return res.json({
+        message: '0 events detected (snapshot unavailable).',
+        train_number: String(train_number),
+        current_station: loc?.stationCode,
+        delay_min: live.delayMinutes,
+        events: [],
+      });
+    }
 
     const allowedTrainNums = Array.isArray(trains_to_track)
       ? trains_to_track.map(String).filter(tn => tn !== String(train_number))
