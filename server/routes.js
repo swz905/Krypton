@@ -90,7 +90,7 @@ function buildJourneyContext(futureStops) {
   }
 
   const routeCoords = routeStations.map(s => s.coords);
-  const pois = loadPois()
+  const candidatePois = loadPois()
     .map(p => {
       const coords = [Number(p.lat), Number(p.lng)];
       const routeDistanceKm = distanceToRouteKm(coords, routeCoords);
@@ -125,8 +125,24 @@ function buildJourneyContext(futureStops) {
       };
     })
     .filter(Boolean)
-    .sort((a, b) => a.route_distance_km - b.route_distance_km)
-    .slice(0, 80);
+    .sort((a, b) => a.route_distance_km - b.route_distance_km);
+
+  // Deduplicate same-named flags: don't show the same flag/name within 500km of each other
+  const MIN_SAME_NAME_DISTANCE_KM = 500;
+  const pois = [];
+  for (const p of candidatePois) {
+    const norm = (p.name || '').trim().toLowerCase();
+    const tooClose = pois.some(other => {
+      if ((other.name || '').trim().toLowerCase() === norm) {
+        return haversine(p.coords, other.coords) < MIN_SAME_NAME_DISTANCE_KM;
+      }
+      return false;
+    });
+    if (!tooClose) {
+      pois.push(p);
+    }
+    if (pois.length >= 80) break;
+  }
 
   return {
     route: routeStations,
